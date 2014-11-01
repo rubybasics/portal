@@ -207,22 +207,45 @@ html = <<HTML
         margin:  0em;
         padding: 0em;
       }
-      .question .option {
+      .question .options .option {
         margin-bottom:  0.5em;
       }
-      .question .option .name {
+      .question .options .name {
         display:        inline-block;
         vertical-align: top;
         font-weight:    bold;
         margin-right:   0.5em;
       }
-      .question .option .value {
+      .question .options .value {
         display:        inline-block;
         vertical-align: top;
       }
-      .question p {
+      .question .options p {
         border: 0em;
         margin: 0em;
+      }
+      .question .answer {
+        padding:          0.5em;
+        margin-bottom:    0.5em;
+        background-color: #afa;
+        font-family:      sans-serif;
+        font-weight:      bold;
+        color:            #383;
+      }
+      .question .hint {
+        padding:          0.5em;
+        margin-bottom:    0.5em;
+        background-color: #fc8;
+        font-family:      sans-serif;
+        font-weight:      bold;
+        color:            #a50;
+      }
+      .question .further-thought {
+        padding:          0.5em;
+        background-color: #aaf;
+        font-family:      sans-serif;
+        font-weight:      bold;
+        color:            #338;
       }
     </style>
     <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
