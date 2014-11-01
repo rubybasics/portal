@@ -31,9 +31,9 @@ questions =
   metadata: {},
   options: {
     a: "`object.kind_of?(:method_name)`",
-    b: "`object.respond_to?(:method_name)",
-    c: "`object.is_a?(:method_name)",
-    d: "`object.include?(:method_name)"
+    b: "`object.respond_to?(:method_name)`",
+    c: "`object.is_a?(:method_name)`",
+    d: "`object.include?(:method_name)`"
   },
   answer: :b,
   hint: 'If it has a method, then we would say it "responds to" that method.',
@@ -50,8 +50,8 @@ questions =
   options: {
     a: "`object.methods`",
     b: "`object.methods(false)`",
-    c: "`object.respond_to?(:method_name)",
-    d: "`object.instance_methods"
+    c: "`object.respond_to?(:method_name)`",
+    d: "`object.instance_methods`"
   },
   answer: :a,
   hint: '"All methods" implies an array, which ones imply an array? What might be the difference between `methods` and `instance_methods`? In method lists, `false` typically means "don\'t show me inherited values."',
