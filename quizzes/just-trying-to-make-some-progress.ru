@@ -147,17 +147,19 @@ html_questions = questions.map { |question|
     html << "<h3>#{q}</h3>\n"
     html << "\n"
 
-    html << "<div class='options'>\n"
-    options.each { |marker, text| html << "<div class='option'><div class='name'>#{marker}</div>\n<div class='value'>\n#{to_html text}\n</div></div>\n" }
+    html << "<div class='body'>\n"
+      html << "<div class='options'>\n"
+        options.each { |marker, text| html << "<div class='option'><div class='name'>#{marker}</div>\n<div class='value'>\n#{to_html text}\n</div></div>\n" }
+      html << "</div>\n"
+
+      html << %'<div class="answer">\n<b>#{answer}</b>\n</div>\n'
+      html << "\n"
+
+      html << %'<div class="hint">\n#{to_html hint}\n</div>\n'
+      html << "\n"
+
+      html << %'<div class="further-thought">\n#{to_html further_thought}\n</div>\n'
     html << "</div>\n"
-
-    html << %'<div class="answer">\n<b>#{answer}</b>\n</div>\n'
-    html << "\n"
-
-    html << %'<div class="hint">\n#{to_html hint}\n</div>\n'
-    html << "\n"
-
-    html << %'<div class="further-thought">\n#{to_html further_thought}\n</div>\n'
   html << "</div>\n"
   html
 }
@@ -199,13 +201,27 @@ html = <<HTML
       .intro {
       }
       .question {
+        position:         relative;
         background-color: #eee;
-        margin-bottom:    3em;
-        padding:          1em;
+        margin:           0em;
+        padding:          0em;
+        margin-bottom:    2em;
       }
       .question h3 {
-        margin:  0em;
-        padding: 0em;
+        box-sizing:       border-box;
+        position:         relative;
+        padding:          0.5em;
+        margin:           0em;
+        width:            100%;
+        background-color: #858;
+        font-size:        1.5em;
+        font-family:      sans-serif;
+        color:            #fff;
+      }
+      .question .body { /* omg, how dumb that I can't just use a body tag */
+        padding:    1em;
+        border:     5px solid #858;
+        border-top: 0px;
       }
       .question .options .option {
         margin-bottom:  0.5em;
