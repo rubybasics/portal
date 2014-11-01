@@ -202,61 +202,59 @@ stylesheet = Sass::Engine.new(<<STYLESHEET, syntax: :sass).render
   padding:          0em
   margin-bottom:    2em
 
-.question h3
-  box-sizing:       border-box
-  position:         relative
-  padding:          0.5em
-  margin:           0em
-  width:            100%
-  background-color: #858
-  font-size:        1.5em
-  font-family:      sans-serif
-  color:            #fff
+  h3
+    box-sizing:       border-box
+    position:         relative
+    padding:          0.5em
+    margin:           0em
+    width:            100%
+    background-color: #858
+    font-size:        1.5em
+    font-family:      sans-serif
+    color:            #fff
 
-.question .body
-  padding:    1em
-  border:     5px solid #858
-  border-top: 0px
+  .body
+    padding:    1em
+    border:     5px solid #858
+    border-top: 0px
 
-.question .options .option
-  margin-bottom:  0.5em
+  .options
+    .option
+      margin-bottom:  0.5em
+    .name
+      display:        inline-block
+      vertical-align: top
+      font-weight:    bold
+      margin-right:   0.5em
+    .value
+      display:        inline-block
+      vertical-align: top
+    p
+      border: 0em
+      margin: 0em
 
-.question .options .name
-  display:        inline-block
-  vertical-align: top
-  font-weight:    bold
-  margin-right:   0.5em
+  .answer
+    padding:          0.5em
+    margin-bottom:    0.5em
+    background-color: #afa
+    font-family:      sans-serif
+    font-weight:      bold
+    color:            #383
 
-.question .options .value
-  display:        inline-block
-  vertical-align: top
+  .hint
+    padding:          0.5em
+    margin-bottom:    0.5em
+    background-color: #fc8
+    font-family:      sans-serif
+    font-weight:      bold
+    color:            #a50
 
-.question .options p
-  border: 0em
-  margin: 0em
-
-.question .answer
-  padding:          0.5em
-  margin-bottom:    0.5em
-  background-color: #afa
-  font-family:      sans-serif
-  font-weight:      bold
-  color:            #383
-
-.question .hint
-  padding:          0.5em
-  margin-bottom:    0.5em
-  background-color: #fc8
-  font-family:      sans-serif
-  font-weight:      bold
-  color:            #a50
-
-.question .further-thought
-  padding:          0.5em
-  background-color: #aaf
-  font-family:      sans-serif
-  font-weight:      bold
-  color:            #338
+  .further-thought
+    padding:          0.5em
+    background-color: #aaf
+    font-family:      sans-serif
+    font-weight:      bold
+    color:            #338
 STYLESHEET
 
 
