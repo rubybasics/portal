@@ -2,7 +2,7 @@ module Quizzes
   class Question
     ATTRIBUTES = [:id, :question, :options, :answer, :hint, :further_thought]
 
-    def initialize(attributes)
+    def initialize(attributes={})
       self.attributes = attributes
     end
 
