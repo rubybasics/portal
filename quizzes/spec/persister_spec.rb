@@ -6,7 +6,7 @@ RSpec.describe Quizzes::Persister do
   end
 
   context 'questions' do
-    it 'saves and loads a question' do
+    it 'creates and loads a question' do
       q1 = Quizzes::Question.new \
         question: 'why?',
         options:  {'a' => 'answer1', 'b' => 'answer2', 'c' => 'answer3'},
