@@ -1,0 +1,40 @@
+#!/usr/bin/env ruby
+
+def dbname
+  'quizzes_test'
+end
+
+# http://www.postgresql.org/docs/current/static/hstore.html
+def create
+  system "createdb #{dbname}"
+  system "psql", "-d", dbname, "-c", <<-SQL
+    CREATE EXTENSION IF NOT EXISTS HSTORE;
+
+    CREATE TABLE quiz_questions (
+      id              SERIAL PRIMARY KEY,
+      question        TEXT,
+      options         HSTORE,
+      answer          VARCHAR(4),
+      hint            TEXT,
+      further_thought TEXT
+    );
+  SQL
+end
+
+def drop
+  system "dropdb #{dbname}"
+end
+
+case ARGV.first
+when 'help', '--help', '-h'
+  puts "#$0 [create|drop|reset|help]"
+when 'create'
+  create
+when 'drop'
+  drop
+when 'reset'
+  drop
+  create
+else
+  $stderr.puts "Don't know what to do with #{ARGV.inspect}"
+end
