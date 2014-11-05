@@ -1,0 +1,25 @@
+Something about why you continuously integrate (from https://github.com/turingschool/ruby-submissions/commit/c045283bacab3e1b94344e7e06a0c7b0d5e78432):
+    A little bit of agile advice like every tiny little thing is value,
+    so merge all the fucking time and don't get in these situation where
+    you have all these branches that you're scared to merge b/c of the
+    inevitable conflict, with teammates waiting for an existing part of
+    one person's feature which isn't merged because some other part
+    isn't in place, which doesn't matter for the person needing the
+    feature. Also, saw a few things like multiple people impelmenting
+    the same feature, because they hadn't merged and didn't realize
+    that the other one was doing it, too.
+
+
+Problem solving:
+  Goal:
+    We wanted to authenticate people.turing.io against apply.turing.io
+  This is how that process works:
+    https://github.com/turingschool/people/commit/8a162ddb822cfda857f2a8dd93a861335e878875
+    ... (put an actual explanation)
+  This is what we saw:
+    In production, the apps were redirecting the user back and forth in an infinite loop.
+  Question:
+    Based on this behaviour, what did we infer the problem was?
+  Answer:
+    people.turing.io needed the same secret_key_base as apply.turing.io
+  How to figure this out:
