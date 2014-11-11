@@ -23,3 +23,11 @@ Problem solving:
   Answer:
     people.turing.io needed the same secret_key_base as apply.turing.io
   How to figure this out:
+
+"What program will be executed?"
+  list command line invocations that are similar, but slightly nuanced, they have to understand the differences enough to tell.
+
+"Where do you enter this code?" -- get them thinking about the context behind these things
+  "ruby something.rb" - console
+  "user.name"         - pry or a Ruby file
+  etc
