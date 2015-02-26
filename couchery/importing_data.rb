@@ -3,22 +3,6 @@ require 'couchrest'
 
 db = CouchRest.database!("http://127.0.0.1:5984/couchrest-test")
 
-# create a view that allows querying google.events via the google_event_id
-begin
-  puts "PRE FIRST GUESS"
-  db.get '_design/google'
-  puts "POST FIRST GUESS"
-rescue RestClient::ResourceNotFound
-  db.save_doc(
-    '_id' => "_design/google", # must be string, b/c that's how couchrest accesses it
-    views: {
-      events: {
-        map: 'function(doc) { if (doc.type === "google.events") emit(doc.google_event_id, doc); }',
-      },
-    },
-  )
-end
-
 # google.calendars
 #   calendar_id
 #   refresh token
@@ -42,29 +26,31 @@ end
 
 save_event = lambda do |event|
   # this "update or create" totally doesn't work, and I'm getting duplicate events :/
-  view      = db.view 'google/events', key: event.id
-  row       = view['rows'][0] || {}
-  doc_attrs = row['value']    || {}
+  begin
+    doc = db.get event.id
+  rescue RestClient::ResourceNotFound
+    doc = CouchRest::Document.new
+  end
 
   # if it dne, create a new doc
-  doc_attrs[:type]               = 'google.events'
-  doc_attrs[:start_time]         = event.start_time   # eg "2015-02-13T07:00:00Z"
-  doc_attrs[:end_time]           = event.end_time     # eg "2015-02-18T07:00:00Z"
-  doc_attrs[:google_event_id]    = event.id           # eg "abc123"
-  doc_attrs[:title]              = event.title        # eg "Welcome & Staff Intros"
-  doc_attrs[:location]           = event.location
-  doc_attrs[:calendar_html_link] = event.html_link    # eg "https://www.google.com/calendar/event?eid=dTFhYjAzMzJuYjNkYTdna282aTVuZnU4MGMgY2FzaW1pcmNyZWF0aXZlLmNvbV81OWs4bXNycmMyZGRoY3Y3ODd2dWJ2cDBzNEBn"
-  doc_attrs[:calendar_id]        = '??'               # going to need to get this off the key we created the db with, it doesn't seem to store this
+  doc.id                   = event.id           # couch id is the google calendar id
+  doc[:type]               = 'google.events'
+  doc[:start_time]         = event.start_time   # eg "2015-02-13T07:00:00Z"
+  doc[:end_time]           = event.end_time     # eg "2015-02-18T07:00:00Z"
+  doc[:google_event_id]    = event.id           # eg "abc123"
+  doc[:title]              = event.title        # eg "Welcome & Staff Intros"
+  doc[:location]           = event.location
+  doc[:calendar_html_link] = event.html_link    # eg "https://www.google.com/calendar/event?eid=dTFhYjAzMzJuYjNkYTdna282aTVuZnU4MGMgY2FzaW1pcmNyZWF0aXZlLmNvbV81OWs4bXNycmMyZGRoY3Y3ODd2dWJ2cDBzNEBn"
+  doc[:calendar_id]        = '??'               # going to need to get this off the key we created the db with, it doesn't seem to store this
 
   # this is probably wrong, b/c its directly saving google calendar json in our db as if its our document
-  doc_attrs[:attendees]          = event.attendees    # => [{"email"=>"team@turing.io",
+  doc[:attendees]          = event.attendees    # => [{"email"=>"team@turing.io",
                                                        #      "displayName"=>"Turing Team",
                                                        #      "responseStatus"=>"needsAction"
                                                        #    }]
 
-  response  = db.save_doc(doc_attrs)
-  couch_doc = db.get(response['id'])
-  couch_doc
+  db.save_doc(doc)
+  doc
 end
 
 
@@ -82,4 +68,5 @@ calendar_events = cal.find_events_in_range Date.today.to_time, (Date.today + 1).
 
 calendar_events.each do |calendar_event|
   couch_event = save_event.call calendar_event
+  p couch_event
 end
