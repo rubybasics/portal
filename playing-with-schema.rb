@@ -85,178 +85,200 @@ end
 end
 
 def define_data
-  c1510 = Cohort.create! name: '1510', status: :pending
-  c1508 = Cohort.create! name: '1508', status: :current
-  c1507 = Cohort.create! name: '1507', status: :current
-  c1505 = Cohort.create! name: '1505', status: :current
-  c1503 = Cohort.create! name: '1503', status: :current
-  c1502 = Cohort.create! name: '1502', status: :graduated
+  require 'rspec/core'
+  integration_tests = RSpec.describe 'Integration test' do
+    it 'can represent all the data from 2015-08-26, and generate content for today.turing.io' do
+      c1510 = Cohort.create! name: '1510', status: :pending
+      c1508 = Cohort.create! name: '1508', status: :current
+      c1507 = Cohort.create! name: '1507', status: :current
+      c1505 = Cohort.create! name: '1505', status: :current
+      c1503 = Cohort.create! name: '1503', status: :current
+      c1502 = Cohort.create! name: '1502', status: :graduated
 
-  Instructor.create! name: 'Jeff Casimir'
-  Instructor.create! name: 'Jorge Tellez'
-  Instructor.create! name: 'Horace Williams'
-  Instructor.create! name: 'Josh Cheek'
-  Instructor.create! name: 'Josh Mejia'
-  chorace = Instructor.create! name: 'Horace Williams'
-  cjorge  = Instructor.create! name: 'Jorge Tellez'
+      expect(Cohort.all).to eq [c1510, c1508, c1507, c1505, c1503, c1502]
 
-  bwspace = Location.create! name: "Big workspace"
+      Instructor.create! name: 'Jeff Casimir'
+      Instructor.create! name: 'Jorge Tellez'
+      Instructor.create! name: 'Horace Williams'
+      Instructor.create! name: 'Josh Cheek'
+      Instructor.create! name: 'Josh Mejia'
+      chorace = Instructor.create! name: 'Horace Williams'
+      cjorge  = Instructor.create! name: 'Jorge Tellez'
 
-  date = Time.parse '2015-08-26'
+      bwspace = Location.create! name: "Big workspace"
 
-  Object.send :define_method, :at do |hours, minutes=0|
-    date + hours.hours + minutes.minutes
+      date = Time.parse '2015-08-26'
+
+      Object.send :define_method, :at do |hours, minutes=0|
+        date + hours.hours + minutes.minutes
+      end
+
+      a = Activity.create! do |a|
+        a.activity_type = :daily_fact
+        a.content       = 'Today, in 1952, Will Shortz was born.'
+        a.start         = date
+        a.finish        = date + 1.day
+      end
+
+      a = Activity.create! do |a|
+        a.activity_type = :warmup
+        a.cohorts       = Cohort.current
+        a.start         = at 8, 30
+        a.finish        = at 9
+        a.content       = <<-MARKDOWN.gsub(/^ */, '')
+          Scientists have developed an allergy test that produces a single numeric score that summarizes information about all the allergies a person has.
+
+          The test checks for the following allergies and assigns them the corresponding value:
+
+          * eggs (1)
+          * peanuts (2)
+          * shellfish (4)
+          * strawberries (8)
+          * tomatoes (16)
+          * chocolate (32)
+          * pollen (64)
+          * cats(128)
+
+          If Jorge is allergic to peanuts and chocolate, he gets a score of 34.
+
+          Your job is to write a program that takes the number and translates it back the allergens that the patient is allergic to.
+
+          In this case, 34 would translate back into a report saying that Jorge was allergic to peanuts and chocolate.
+
+          Because you all love TDD, here are some cases that you can test against:
+
+          A score of two would mean that the patient is allergic to just peanuts.
+
+          A score of 3 would mean that the patient is allergic to eggs and peanuts.
+        MARKDOWN
+      end
+
+      a = Activity.create! do |a|
+        a.activity_type = :lesson
+        a.start         = at 9
+        a.finish        = at 9, 30
+        a.instructors   = [Instructor.first]
+        a.cohorts       = [Cohort.find_by(name: "1503")]
+        a.title         = "Exercise -- SuperFizz in JS"
+        a.content       = <<-MARKDOWN.gsub(/^ */, '')
+          Start the day off right by joining Horace in classroom C to write
+          a variant of FizzBuzz, [SuperFizz](https://github.com/turingschool/challenges/blob/master/super_fizz.markdown).
+        MARKDOWN
+      end
+
+      a = Activity.create! do |a|
+        a.activity_type = :lesson
+        a.start         = at 9
+        a.finish        = at 9, 30
+        a.instructors   = [chorace]
+        a.cohorts       = [c1503]
+        a.title         = "Exercise -- SuperFizz in JS"
+        a.content       = <<-MARKDOWN.gsub(/^ */, '')
+          Start the day off right by joining Horace in classroom C to write
+          a variant of FizzBuzz, [SuperFizz](https://github.com/turingschool/challenges/blob/master/super_fizz.markdown).
+        MARKDOWN
+      end
+
+      a = Activity.create! do |a|
+        a.activity_type = :lesson
+        a.start         = at 9, 30
+        a.finish        = at 12
+        a.instructors   = [chorace]
+        a.cohorts       = [c1503]
+        a.title         = "Full-Stack Integration Testing with Selenium"
+        a.content      = <<-MARKDOWN.gsub(/^ */, '')
+          Join Horace in Classroom C to practice working with Selenium,
+          a browser driver for Capybara which let's us write integration
+          tests which actually exercise our JS code as well!
+
+          [Lesson](https://github.com/turingschool/lesson_plans/blob/master/ruby_04-apis_and_scalability/full_stack_integration_testing_with_selenium.markdown)
+        MARKDOWN
+        a.groups        = <<-GROUPS.gsub(/^ */, '')
+          * Margarett Ly & Drew Reynolds
+          * Max Tedford & Vanessa Gomez
+          * Whitney Hiemstra & Sally MacNicholas
+          * Morgan Miller & Justin Holmes
+          * Brett Grigsby & Josh Cass
+        GROUPS
+      end
+
+      a = Activity.create! do |a|
+        a.activity_type = :work_time
+        a.start         = at 1
+        a.finish        = at 4
+        a.cohorts       = [c1503]
+        a.title         = 'Project Work Time and Check-Ins'
+        a.groups        = <<-CHECKINS.gsub(/^ */, '')
+          ## With     Horace
+
+          * 1:00 - Brett Grigsby
+          * 1:30 - Drew Reynolds
+          * 2:00 - Vanessa Gomez
+          * 2:30 - Margarett Ly
+
+          ### With Brittany
+
+          * 1:00 - Morgan Miller
+          * 1:30 - Justin Holmes
+          * 2:00 - Josh Cass
+          * 2:30 - Whitney Hiemstra
+
+          ### With Andrew
+
+          * 1:00 - Max Tedford
+          * 1:30 - Sally MacNicholas
+          * 2:00 - Lev Kravinsky
+        CHECKINS
+      end
+
+      a = Activity.create! do |a|
+        a.activity_type = :lesson
+        a.start         = 9
+        a.finish        = 12
+        a.cohorts       = [c1505]
+        a.instructors   = [cjorge]
+        a.location      = bwspace
+        a.title         = 'Multi-Tenancy Authorization'
+        a.content       = <<-CONTENT.gsub(/^ */, '')
+          Learn about how to manage different user permissions using a service object.
+
+          Before the class, please clone the lesson repo using the following command:
+
+          ```
+          git clone -b multitenancy_authorization https://github.com/turingschool-examples/storedom.git multitenancy_authorization
+          ```
+
+          The materials for this lesson are the following:
+
+          * [Notes](https://www.dropbox.com/s/xebujx48iaf3vwl/Turing%20-%20Multitenancy%20Authorization%20%28Notes%29.pages?dl=0)
+          * [Lesson Plan](https://github.com/turingschool/lesson_plans/blob/master/ruby_03-professional_rails_applications/multitenancy_authorization.markdown)
+          * [Video](https://vimeo.com/137451107)
+        CONTENT
+      end
+
+      a.activity_type # => "lesson"
+      a.start # => 9
+      a.finish # => 12
+      a.location # => #<Location id: 1, name: "Big workspace", activity_id: 7>
+      a.cohorts # => #<ActiveRecord::Associations::CollectionProxy [#<Cohort id: 4, name: "1505", status: "current">]>
+      a.title # => "Multi-Tenancy Authorization"
+      a.groups # => nil
+    end
   end
 
-  a = Activity.create! do |a|
-    a.activity_type = :daily_fact
-    a.content       = 'Today, in 1952, Will Shortz was born.'
-    a.start         = date
-    a.finish        = date + 1.day
+  require 'error_to_communicate/rspec_formatter'
+  if $stdout.tty?
+    RSpec.configure do |c|
+      c.color     = true
+      c.formatter = ErrorToCommunicate::RSpecFormatter
+    end
   end
 
-  a = Activity.create! do |a|
-    a.activity_type = :warmup
-    a.cohorts       = Cohort.current
-    a.start         = at 8, 30
-    a.finish        = at 9
-    a.content       = <<-MARKDOWN.gsub(/^ */, '')
-      Scientists have developed an allergy test that produces a single numeric score that summarizes information about all the allergies a person has.
-
-      The test checks for the following allergies and assigns them the corresponding value:
-
-      * eggs (1)
-      * peanuts (2)
-      * shellfish (4)
-      * strawberries (8)
-      * tomatoes (16)
-      * chocolate (32)
-      * pollen (64)
-      * cats(128)
-
-      If Jorge is allergic to peanuts and chocolate, he gets a score of 34.
-
-      Your job is to write a program that takes the number and translates it back the allergens that the patient is allergic to.
-
-      In this case, 34 would translate back into a report saying that Jorge was allergic to peanuts and chocolate.
-
-      Because you all love TDD, here are some cases that you can test against:
-
-      A score of two would mean that the patient is allergic to just peanuts.
-
-      A score of 3 would mean that the patient is allergic to eggs and peanuts.
-    MARKDOWN
+  RSpec.configuration.reporter.tap do |reporter|
+    reporter.start 1
+    integration_tests.run reporter
+    reporter.finish
   end
-
-  a = Activity.create! do |a|
-    a.activity_type = :lesson
-    a.start         = at 9
-    a.finish        = at 9, 30
-    a.instructors   = [Instructor.first]
-    a.cohorts       = [Cohort.find_by(name: "1503")]
-    a.title         = "Exercise -- SuperFizz in JS"
-    a.content       = <<-MARKDOWN.gsub(/^ */, '')
-      Start the day off right by joining Horace in classroom C to write
-      a variant of FizzBuzz, [SuperFizz](https://github.com/turingschool/challenges/blob/master/super_fizz.markdown).
-    MARKDOWN
-  end
-
-  a = Activity.create! do |a|
-    a.activity_type = :lesson
-    a.start         = at 9
-    a.finish        = at 9, 30
-    a.instructors   = [chorace]
-    a.cohorts       = [c1503]
-    a.title         = "Exercise -- SuperFizz in JS"
-    a.content       = <<-MARKDOWN.gsub(/^ */, '')
-      Start the day off right by joining Horace in classroom C to write
-      a variant of FizzBuzz, [SuperFizz](https://github.com/turingschool/challenges/blob/master/super_fizz.markdown).
-    MARKDOWN
-  end
-
-  a = Activity.create! do |a|
-    a.activity_type = :lesson
-    a.start         = at 9, 30
-    a.finish        = at 12
-    a.instructors   = [chorace]
-    a.cohorts       = [c1503]
-    a.title         = "Full-Stack Integration Testing with Selenium"
-    a.content      = <<-MARKDOWN.gsub(/^ */, '')
-      Join Horace in Classroom C to practice working with Selenium,
-      a browser driver for Capybara which let's us write integration
-      tests which actually exercise our JS code as well!
-
-      [Lesson](https://github.com/turingschool/lesson_plans/blob/master/ruby_04-apis_and_scalability/full_stack_integration_testing_with_selenium.markdown)
-    MARKDOWN
-    a.groups        = <<-GROUPS.gsub(/^ */, '')
-      * Margarett Ly & Drew Reynolds
-      * Max Tedford & Vanessa Gomez
-      * Whitney Hiemstra & Sally MacNicholas
-      * Morgan Miller & Justin Holmes
-      * Brett Grigsby & Josh Cass
-    GROUPS
-  end
-
-  a = Activity.create! do |a|
-    a.activity_type = :work_time
-    a.start         = at 1
-    a.finish        = at 4
-    a.cohorts       = [c1503]
-    a.title         = 'Project Work Time and Check-Ins'
-    a.groups        = <<-CHECKINS.gsub(/^ */, '')
-      ## With     Horace
-
-      * 1:00 - Brett Grigsby
-      * 1:30 - Drew Reynolds
-      * 2:00 - Vanessa Gomez
-      * 2:30 - Margarett Ly
-
-      ### With Brittany
-
-      * 1:00 - Morgan Miller
-      * 1:30 - Justin Holmes
-      * 2:00 - Josh Cass
-      * 2:30 - Whitney Hiemstra
-
-      ### With Andrew
-
-      * 1:00 - Max Tedford
-      * 1:30 - Sally MacNicholas
-      * 2:00 - Lev Kravinsky
-    CHECKINS
-  end
-
-  a = Activity.create! do |a|
-    a.activity_type = :lesson
-    a.start         = 9
-    a.finish        = 12
-    a.cohorts       = [c1505]
-    a.instructors   = [cjorge]
-    a.location      = bwspace
-    a.title         = 'Multi-Tenancy Authorization'
-    a.content       = <<-CONTENT.gsub(/^ */, '')
-      Learn about how to manage different user permissions using a service object.
-
-      Before the class, please clone the lesson repo using the following command:
-
-      ```
-      git clone -b multitenancy_authorization https://github.com/turingschool-examples/storedom.git multitenancy_authorization
-      ```
-
-      The materials for this lesson are the following:
-
-      * [Notes](https://www.dropbox.com/s/xebujx48iaf3vwl/Turing%20-%20Multitenancy%20Authorization%20%28Notes%29.pages?dl=0)
-      * [Lesson Plan](https://github.com/turingschool/lesson_plans/blob/master/ruby_03-professional_rails_applications/multitenancy_authorization.markdown)
-      * [Video](https://vimeo.com/137451107)
-    CONTENT
-  end
-  a.activity_type # => "lesson"
-  a.start # => 9
-  a.finish # => 12
-  a.location # => #<Location id: 1, name: "Big workspace", activity_id: 7>
-  a.cohorts # => #<ActiveRecord::Associations::CollectionProxy [#<Cohort id: 4, name: "1505", status: "current">]>
-  a.title # => "Multi-Tenancy Authorization"
-  a.groups # => nil
 end
 
 unless defined? ActiveRecord

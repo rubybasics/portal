@@ -46,10 +46,12 @@ gem 'deject'                                           # dependency injection
 group :development, :test do
   gem 'rspec-rails', '~> 3.0.0'
   gem 'pry'
+  gem 'what_weve_got_here_is_an_error_to_communicate'
 end
 
 group :test do
   gem 'cucumber-rails', :require => false
   # database_cleaner is not required, but highly recommended
   gem 'database_cleaner'
+  gem 'mrspec'
 end
