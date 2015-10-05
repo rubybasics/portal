@@ -2,7 +2,7 @@ def define_schema(db_type)
   atype = :string
   if db_type == :pg
     atype = :activity_type
-    connection.execute "CREATE TYPE activity_type AS ENUM ('daily_fact', 'warmup', 'lesson');"
+    connection.execute "CREATE TYPE activity_type AS ENUM ('daily_fact', 'warmup', 'lesson', 'work_time');"
   end
 
   create_table :activities do |t|
@@ -11,6 +11,7 @@ def define_schema(db_type)
     t.text   :content
     t.datetime :start
     t.datetime :finish
+    t.text :groups
   end
 
   create_table :activities_to_cohorts do |t|
@@ -37,6 +38,11 @@ def define_schema(db_type)
   create_table :instructors do |t|
     t.string :name
   end
+
+  create_table :locations do |t|
+    t.string :name
+    t.integer :activity_id
+  end
 end
 
 ::Object.send :define_method, :define_models do
@@ -45,6 +51,7 @@ end
     has_many :activities_to_instructors, class_name: 'ActivityToInstructor'
     has_many :cohorts, through: :activities_to_cohorts
     has_many :instructors, through: :activities_to_instructors
+    has_one :location
   end
 
   class ActivityToCohort < ActiveRecord::Base
@@ -71,6 +78,10 @@ end
     has_many :activituies_to_instrcctors, class_name: 'ActivityToInstructor'
     has_many :activities, through: :activities_to_cohorts
   end
+
+  class Location < ActiveRecord::Base
+    belongs_to :activity
+  end
 end
 
 def define_data
@@ -86,6 +97,10 @@ def define_data
   Instructor.create! name: 'Horace Williams'
   Instructor.create! name: 'Josh Cheek'
   Instructor.create! name: 'Josh Mejia'
+  chorace = Instructor.create! name: 'Horace Williams'
+  cjorge  = Instructor.create! name: 'Jorge Tellez'
+
+  bwspace = Location.create! name: "Big workspace"
 
   date = Time.parse '2015-08-26'
 
@@ -140,11 +155,108 @@ def define_data
     a.instructors   = [Instructor.first]
     a.cohorts       = [Cohort.find_by(name: "1503")]
     a.title         = "Exercise -- SuperFizz in JS"
-    a.content       = <<-MARKDOWN
+    a.content       = <<-MARKDOWN.gsub(/^ */, '')
       Start the day off right by joining Horace in classroom C to write
       a variant of FizzBuzz, [SuperFizz](https://github.com/turingschool/challenges/blob/master/super_fizz.markdown).
     MARKDOWN
   end
+
+  a = Activity.create! do |a|
+    a.activity_type = :lesson
+    a.start         = at 9
+    a.finish        = at 9, 30
+    a.instructors   = [chorace]
+    a.cohorts       = [c1503]
+    a.title         = "Exercise -- SuperFizz in JS"
+    a.content       = <<-MARKDOWN.gsub(/^ */, '')
+      Start the day off right by joining Horace in classroom C to write
+      a variant of FizzBuzz, [SuperFizz](https://github.com/turingschool/challenges/blob/master/super_fizz.markdown).
+    MARKDOWN
+  end
+
+  a = Activity.create! do |a|
+    a.activity_type = :lesson
+    a.start         = at 9, 30
+    a.finish        = at 12
+    a.instructors   = [chorace]
+    a.cohorts       = [c1503]
+    a.title         = "Full-Stack Integration Testing with Selenium"
+    a.content      = <<-MARKDOWN.gsub(/^ */, '')
+      Join Horace in Classroom C to practice working with Selenium,
+      a browser driver for Capybara which let's us write integration
+      tests which actually exercise our JS code as well!
+
+      [Lesson](https://github.com/turingschool/lesson_plans/blob/master/ruby_04-apis_and_scalability/full_stack_integration_testing_with_selenium.markdown)
+    MARKDOWN
+    a.groups        = <<-GROUPS.gsub(/^ */, '')
+      * Margarett Ly & Drew Reynolds
+      * Max Tedford & Vanessa Gomez
+      * Whitney Hiemstra & Sally MacNicholas
+      * Morgan Miller & Justin Holmes
+      * Brett Grigsby & Josh Cass
+    GROUPS
+  end
+
+  a = Activity.create! do |a|
+    a.activity_type = :work_time
+    a.start         = at 1
+    a.finish        = at 4
+    a.cohorts       = [c1503]
+    a.title         = 'Project Work Time and Check-Ins'
+    a.groups        = <<-CHECKINS.gsub(/^ */, '')
+      ## With     Horace
+
+      * 1:00 - Brett Grigsby
+      * 1:30 - Drew Reynolds
+      * 2:00 - Vanessa Gomez
+      * 2:30 - Margarett Ly
+
+      ### With Brittany
+
+      * 1:00 - Morgan Miller
+      * 1:30 - Justin Holmes
+      * 2:00 - Josh Cass
+      * 2:30 - Whitney Hiemstra
+
+      ### With Andrew
+
+      * 1:00 - Max Tedford
+      * 1:30 - Sally MacNicholas
+      * 2:00 - Lev Kravinsky
+    CHECKINS
+  end
+
+  a = Activity.create! do |a|
+    a.activity_type = :lesson
+    a.start         = 9
+    a.finish        = 12
+    a.cohorts       = [c1505]
+    a.instructors   = [cjorge]
+    a.location      = bwspace
+    a.title         = 'Multi-Tenancy Authorization'
+    a.content       = <<-CONTENT.gsub(/^ */, '')
+      Learn about how to manage different user permissions using a service object.
+
+      Before the class, please clone the lesson repo using the following command:
+
+      ```
+      git clone -b multitenancy_authorization https://github.com/turingschool-examples/storedom.git multitenancy_authorization
+      ```
+
+      The materials for this lesson are the following:
+
+      * [Notes](https://www.dropbox.com/s/xebujx48iaf3vwl/Turing%20-%20Multitenancy%20Authorization%20%28Notes%29.pages?dl=0)
+      * [Lesson Plan](https://github.com/turingschool/lesson_plans/blob/master/ruby_03-professional_rails_applications/multitenancy_authorization.markdown)
+      * [Video](https://vimeo.com/137451107)
+    CONTENT
+  end
+  a.activity_type # => "lesson"
+  a.start # => 9
+  a.finish # => 12
+  a.location # => #<Location id: 1, name: "Big workspace", activity_id: 7>
+  a.cohorts # => #<ActiveRecord::Associations::CollectionProxy [#<Cohort id: 4, name: "1505", status: "current">]>
+  a.title # => "Multi-Tenancy Authorization"
+  a.groups # => nil
 end
 
 unless defined? ActiveRecord
@@ -164,50 +276,6 @@ end
 
 __END__
 
-## 1503
-
-## Exercise -- SuperFizz in JS (9:00 - 9:30)
-
-Start the day off right by joining Horace in classroom C to write
-a variant of FizzBuzz, [SuperFizz](https://github.com/turingschool/challenges/blob/master/super_fizz.markdown).
-
-## Full-Stack Integration Testing with Selenium (9:30 - 12:00)
-
-Join Horace in Classroom C to practice working with Selenium,
-a browser driver for Capybara which let's us write integration
-tests which actually exercise our JS code as well!
-
-[Lesson](https://github.com/turingschool/lesson_plans/blob/master/ruby_04-apis_and_scalability/full_stack_integration_testing_with_selenium.markdown)
-
-For one section of this lesson, we'll do some work in pairs:
-
-* Margarett Ly & Drew Reynolds
-* Max Tedford & Vanessa Gomez
-* Whitney Hiemstra & Sally MacNicholas
-* Morgan Miller & Justin Holmes
-* Brett Grigsby & Josh Cass
-
-## Project Work Time and Check-Ins (1:00 - 4:00)
-
-### With Horace
-
-* 1:00 - Brett Grigsby
-* 1:30 - Drew Reynolds
-* 2:00 - Vanessa Gomez
-* 2:30 - Margarett Ly
-
-### With Brittany
-
-* 1:00 - Morgan Miller
-* 1:30 - Justin Holmes
-* 2:00 - Josh Cass
-* 2:30 - Whitney Hiemstra
-
-### With Andrew
-
-* 1:00 - Max Tedford
-* 1:30 - Sally MacNicholas
-* 2:00 - Lev Kravinsky
 
 ## 1505
 
