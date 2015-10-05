@@ -1,11 +1,9 @@
-require 'active_record'
-ActiveRecord::Base.establish_connection adapter: 'sqlite3', database: ':memory:'
-ActiveRecord::Schema.define do
-  self.verbose = false
-
+def define_schema(db_type)
   atype = :string
-  # atype = :activity_type
-  # connection.execute "CREATE TYPE activity_type AS ENUM ('daily_fact');"
+  if db_type == :pg
+    atype = :activity_type
+    connection.execute "CREATE TYPE activity_type AS ENUM ('daily_fact', 'warmup', 'lesson');"
+  end
 
   create_table :activities do |t|
     t.column :activity_type, atype
@@ -26,8 +24,10 @@ ActiveRecord::Schema.define do
   end
 
   status_type = :string
-  # status_type = :status_type
-  # connection.execute "CREATE TYPE status_type AS ENUM ('pending', 'current', 'graduated');"
+  if db_type == :pg
+    status_type = :status_type
+    connection.execute "CREATE TYPE status_type AS ENUM ('pending', 'current', 'graduated');"
+  end
 
   create_table :cohorts do |t|
     t.string :name
@@ -39,109 +39,127 @@ ActiveRecord::Schema.define do
   end
 end
 
-class Activity < ActiveRecord::Base
-  has_many :activities_to_cohorts, class_name: 'ActivityToCohort'
-  has_many :activities_to_instructors, class_name: 'ActivityToInstructor'
-  has_many :cohorts, through: :activities_to_cohorts
-  has_many :instructors, through: :activities_to_instructors
-end
+::Object.send :define_method, :define_models do
+  class Activity < ActiveRecord::Base
+    has_many :activities_to_cohorts, class_name: 'ActivityToCohort'
+    has_many :activities_to_instructors, class_name: 'ActivityToInstructor'
+    has_many :cohorts, through: :activities_to_cohorts
+    has_many :instructors, through: :activities_to_instructors
+  end
 
-class ActivityToCohort < ActiveRecord::Base
-  self.table_name = 'activities_to_cohorts'
-  belongs_to :activity
-  belongs_to :cohort
-end
+  class ActivityToCohort < ActiveRecord::Base
+    self.table_name = 'activities_to_cohorts'
+    belongs_to :activity
+    belongs_to :cohort
+  end
 
-class ActivityToInstructor < ActiveRecord::Base
-  self.table_name = 'activities_to_instructors'
-  belongs_to :instructor
-  belongs_to :activity
-end
+  class ActivityToInstructor < ActiveRecord::Base
+    self.table_name = 'activities_to_instructors'
+    belongs_to :instructor
+    belongs_to :activity
+  end
 
-class Cohort < ActiveRecord::Base
-  has_many :activities_to_cohorts, class_name: 'ActivityToCohort'
-  has_many :activities, through: :activities_to_cohorts
-  def self.current
-    where status: :current
+  class Cohort < ActiveRecord::Base
+    has_many :activities_to_cohorts, class_name: 'ActivityToCohort'
+    has_many :activities, through: :activities_to_cohorts
+    def self.current
+      where status: :current
+    end
+  end
+
+  class Instructor < ActiveRecord::Base
+    has_many :activituies_to_instrcctors, class_name: 'ActivityToInstructor'
+    has_many :activities, through: :activities_to_cohorts
   end
 end
 
-class Instructor < ActiveRecord::Base
-  has_many :activituies_to_instrcctors, class_name: 'ActivityToInstructor'
-  has_many :activities, through: :activities_to_cohorts
+def define_data
+  c1510 = Cohort.create! name: '1510', status: :pending
+  c1508 = Cohort.create! name: '1508', status: :current
+  c1507 = Cohort.create! name: '1507', status: :current
+  c1505 = Cohort.create! name: '1505', status: :current
+  c1503 = Cohort.create! name: '1503', status: :current
+  c1502 = Cohort.create! name: '1502', status: :graduated
+
+  Instructor.create! name: 'Jeff Casimir'
+  Instructor.create! name: 'Jorge Tellez'
+  Instructor.create! name: 'Horace Williams'
+  Instructor.create! name: 'Josh Cheek'
+  Instructor.create! name: 'Josh Mejia'
+
+  date = Time.parse '2015-08-26'
+
+  Object.send :define_method, :at do |hours, minutes=0|
+    date + hours.hours + minutes.minutes
+  end
+
+  a = Activity.create! do |a|
+    a.activity_type = :daily_fact
+    a.content       = 'Today, in 1952, Will Shortz was born.'
+    a.start         = date
+    a.finish        = date + 1.day
+  end
+
+  a = Activity.create! do |a|
+    a.activity_type = :warmup
+    a.cohorts       = Cohort.current
+    a.start         = at 8, 30
+    a.finish        = at 9
+    a.content       = <<-MARKDOWN.gsub(/^ */, '')
+      Scientists have developed an allergy test that produces a single numeric score that summarizes information about all the allergies a person has.
+
+      The test checks for the following allergies and assigns them the corresponding value:
+
+      * eggs (1)
+      * peanuts (2)
+      * shellfish (4)
+      * strawberries (8)
+      * tomatoes (16)
+      * chocolate (32)
+      * pollen (64)
+      * cats(128)
+
+      If Jorge is allergic to peanuts and chocolate, he gets a score of 34.
+
+      Your job is to write a program that takes the number and translates it back the allergens that the patient is allergic to.
+
+      In this case, 34 would translate back into a report saying that Jorge was allergic to peanuts and chocolate.
+
+      Because you all love TDD, here are some cases that you can test against:
+
+      A score of two would mean that the patient is allergic to just peanuts.
+
+      A score of 3 would mean that the patient is allergic to eggs and peanuts.
+    MARKDOWN
+  end
+
+  a = Activity.create! do |a|
+    a.activity_type = :lesson
+    a.start         = at 9
+    a.finish        = at 9, 30
+    a.instructors   = [Instructor.first]
+    a.cohorts       = [Cohort.find_by(name: "1503")]
+    a.title         = "Exercise -- SuperFizz in JS"
+    a.content       = <<-MARKDOWN
+      Start the day off right by joining Horace in classroom C to write
+      a variant of FizzBuzz, [SuperFizz](https://github.com/turingschool/challenges/blob/master/super_fizz.markdown).
+    MARKDOWN
+  end
 end
 
-c1510 = Cohort.create! name: '1510', status: :pending
-c1508 = Cohort.create! name: '1508', status: :current
-c1507 = Cohort.create! name: '1507', status: :current
-c1505 = Cohort.create! name: '1505', status: :current
-c1503 = Cohort.create! name: '1503', status: :current
-c1502 = Cohort.create! name: '1502', status: :graduated
+unless defined? ActiveRecord
+  require 'active_record'
+  ActiveRecord::Base.establish_connection adapter: 'sqlite3', database: ':memory:'
 
-Instructor.create! name: 'Jeff Casimir'
-Instructor.create! name: 'Jorge Tellez'
-Instructor.create! name: 'Horace Williams'
-Instructor.create! name: 'Josh Cheek'
-Instructor.create! name: 'Josh Mejia'
+  ActiveRecord::Schema.define do
+    self.verbose = false
+    define_schema(:sqlite)
+  end
 
-date = Time.parse '2015-08-26'
-
-define_method :at do |hours, minutes=0|
-  date + hours.hours + minutes.minutes
+  define_models
+  define_data
 end
 
-a = Activity.create! do |a|
-  a.activity_type = :daily_fact
-  a.content       = 'Today, in 1952, Will Shortz was born.'
-  a.start         = date
-  a.finish        = date + 1.day
-end
-
-a = Activity.create! do |a|
-  a.activity_type = :warmup
-  a.cohorts       = Cohort.current
-  a.start         = at 8, 30
-  a.finish        = at 9
-  a.content       = <<-MARKDOWN
-Scientists have developed an allergy test that produces a single numeric score that summarizes information about all the allergies a person has.
-
-The test checks for the following allergies and assigns them the corresponding value:
-
-* eggs (1)
-* peanuts (2)
-* shellfish (4)
-* strawberries (8)
-* tomatoes (16)
-* chocolate (32)
-* pollen (64)
-* cats(128)
-
-If Jorge is allergic to peanuts and chocolate, he gets a score of 34.
-
-Your job is to write a program that takes the number and translates it back the allergens that the patient is allergic to.
-
-In this case, 34 would translate back into a report saying that Jorge was allergic to peanuts and chocolate.
-
-Because you all love TDD, here are some cases that you can test against:
-
-A score of two would mean that the patient is allergic to just peanuts.
-
-A score of 3 would mean that the patient is allergic to eggs and peanuts.
-MARKDOWN
-end
-
-a = Activity.create! do |a|
-  a.activity_type = :lesson
-  a.start         = at 9
-  a.finish        = at 9, 30
-  a.instructors   = [Instructor.first]
-  a.cohorts       = [Cohort.find_by(name: "1503")]
-  a.title         = "Exercise -- SuperFizz in JS"
-  a.content       = <<-MARKDOWN
-Start the day off right by joining Horace in classroom C to write
-a variant of FizzBuzz, [SuperFizz](https://github.com/turingschool/challenges/blob/master/super_fizz.markdown).
-MARKDOWN
-end
 
 
 __END__
