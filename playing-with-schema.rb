@@ -9,6 +9,7 @@ ActiveRecord::Schema.define do
 
   create_table :activities do |t|
     t.column :activity_type, atype
+    t.text   :title
     t.text   :content
     t.datetime :start
     t.datetime :finish
@@ -19,6 +20,11 @@ ActiveRecord::Schema.define do
     t.integer :cohort_id
   end
 
+  create_table :activities_to_instructors do |t|
+    t.integer :activity_id
+    t.integer :instructor_id
+  end
+
   status_type = :string
   # status_type = :status_type
   # connection.execute "CREATE TYPE status_type AS ENUM ('pending', 'current', 'graduated');"
@@ -27,17 +33,29 @@ ActiveRecord::Schema.define do
     t.string :name
     t.column :status, status_type
   end
+
+  create_table :instructors do |t|
+    t.string :name
+  end
 end
 
 class Activity < ActiveRecord::Base
   has_many :activities_to_cohorts, class_name: 'ActivityToCohort'
+  has_many :activities_to_instructors, class_name: 'ActivityToInstructor'
   has_many :cohorts, through: :activities_to_cohorts
+  has_many :instructors, through: :activities_to_instructors
 end
 
 class ActivityToCohort < ActiveRecord::Base
   self.table_name = 'activities_to_cohorts'
   belongs_to :activity
   belongs_to :cohort
+end
+
+class ActivityToInstructor < ActiveRecord::Base
+  self.table_name = 'activities_to_instructors'
+  belongs_to :instructor
+  belongs_to :activity
 end
 
 class Cohort < ActiveRecord::Base
@@ -48,12 +66,23 @@ class Cohort < ActiveRecord::Base
   end
 end
 
+class Instructor < ActiveRecord::Base
+  has_many :activituies_to_instrcctors, class_name: 'ActivityToInstructor'
+  has_many :activities, through: :activities_to_cohorts
+end
+
 c1510 = Cohort.create! name: '1510', status: :pending
 c1508 = Cohort.create! name: '1508', status: :current
 c1507 = Cohort.create! name: '1507', status: :current
 c1505 = Cohort.create! name: '1505', status: :current
 c1503 = Cohort.create! name: '1503', status: :current
 c1502 = Cohort.create! name: '1502', status: :graduated
+
+Instructor.create! name: 'Jeff Casimir'
+Instructor.create! name: 'Jorge Tellez'
+Instructor.create! name: 'Horace Williams'
+Instructor.create! name: 'Josh Cheek'
+Instructor.create! name: 'Josh Mejia'
 
 date = Time.parse '2015-08-26'
 
@@ -101,7 +130,18 @@ A score of 3 would mean that the patient is allergic to eggs and peanuts.
 MARKDOWN
 end
 
-
+a = Activity.create! do |a|
+  a.activity_type = :lesson
+  a.start         = at 9
+  a.finish        = at 9, 30
+  a.instructors   = [Instructor.first]
+  a.cohorts       = [Cohort.find_by(name: "1503")]
+  a.title         = "Exercise -- SuperFizz in JS"
+  a.content       = <<-MARKDOWN
+Start the day off right by joining Horace in classroom C to write
+a variant of FizzBuzz, [SuperFizz](https://github.com/turingschool/challenges/blob/master/super_fizz.markdown).
+MARKDOWN
+end
 
 
 __END__
