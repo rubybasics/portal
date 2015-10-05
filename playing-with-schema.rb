@@ -13,6 +13,7 @@ ActiveRecord::Schema.define do
     t.text   :content
     t.datetime :start
     t.datetime :finish
+    t.text :groups
   end
 
   create_table :activities_to_cohorts do |t|
@@ -37,6 +38,11 @@ ActiveRecord::Schema.define do
   create_table :instructors do |t|
     t.string :name
   end
+
+  create_table :locations do |t|
+    t.string :name
+    t.integer :activity_id
+  end
 end
 
 class Activity < ActiveRecord::Base
@@ -44,6 +50,7 @@ class Activity < ActiveRecord::Base
   has_many :activities_to_instructors, class_name: 'ActivityToInstructor'
   has_many :cohorts, through: :activities_to_cohorts
   has_many :instructors, through: :activities_to_instructors
+  has_one :location
 end
 
 class ActivityToCohort < ActiveRecord::Base
@@ -71,6 +78,10 @@ class Instructor < ActiveRecord::Base
   has_many :activities, through: :activities_to_cohorts
 end
 
+class Location < ActiveRecord::Base
+  belongs_to :activity
+end
+
 c1510 = Cohort.create! name: '1510', status: :pending
 c1508 = Cohort.create! name: '1508', status: :current
 c1507 = Cohort.create! name: '1507', status: :current
@@ -78,11 +89,10 @@ c1505 = Cohort.create! name: '1505', status: :current
 c1503 = Cohort.create! name: '1503', status: :current
 c1502 = Cohort.create! name: '1502', status: :graduated
 
-Instructor.create! name: 'Jeff Casimir'
-Instructor.create! name: 'Jorge Tellez'
-Instructor.create! name: 'Horace Williams'
-Instructor.create! name: 'Josh Cheek'
-Instructor.create! name: 'Josh Mejia'
+chorace = Instructor.create! name: 'Horace Williams'
+cjorge = Instructor.create! name: 'Jorge Tellez'
+
+bwspace = Location.create! name: "Big workspace"
 
 date = Time.parse '2015-08-26'
 
@@ -134,8 +144,8 @@ a = Activity.create! do |a|
   a.activity_type = :lesson
   a.start         = at 9
   a.finish        = at 9, 30
-  a.instructors   = [Instructor.first]
-  a.cohorts       = [Cohort.find_by(name: "1503")]
+  a.instructors   = [chorace]
+  a.cohorts       = [c1503]
   a.title         = "Exercise -- SuperFizz in JS"
   a.content       = <<-MARKDOWN
 Start the day off right by joining Horace in classroom C to write
@@ -143,35 +153,37 @@ a variant of FizzBuzz, [SuperFizz](https://github.com/turingschool/challenges/bl
 MARKDOWN
 end
 
-
-__END__
-
-## 1503
-
-## Exercise -- SuperFizz in JS (9:00 - 9:30)
-
-Start the day off right by joining Horace in classroom C to write
-a variant of FizzBuzz, [SuperFizz](https://github.com/turingschool/challenges/blob/master/super_fizz.markdown).
-
-## Full-Stack Integration Testing with Selenium (9:30 - 12:00)
-
+a = Activity.create! do |a|
+  a.activity_type = :lesson
+  a.start         = at 9, 30
+  a.finish        = at 12
+  a.instructors   = [chorace]
+  a.cohorts       = [c1503]
+  a.title         = "Full-Stack Integration Testing with Selenium"
+  a.content      = <<-MARKDOWN
 Join Horace in Classroom C to practice working with Selenium,
 a browser driver for Capybara which let's us write integration
 tests which actually exercise our JS code as well!
 
 [Lesson](https://github.com/turingschool/lesson_plans/blob/master/ruby_04-apis_and_scalability/full_stack_integration_testing_with_selenium.markdown)
-
-For one section of this lesson, we'll do some work in pairs:
-
+MARKDOWN
+  a.groups        = <<-GROUPS
 * Margarett Ly & Drew Reynolds
 * Max Tedford & Vanessa Gomez
 * Whitney Hiemstra & Sally MacNicholas
 * Morgan Miller & Justin Holmes
 * Brett Grigsby & Josh Cass
+GROUPS
+end
 
-## Project Work Time and Check-Ins (1:00 - 4:00)
-
-### With Horace
+a = Activity.create! do |a|
+  a.activity_type = :work_time
+  a.start         = at 1
+  a.finish        = at 4
+  a.cohorts       = [c1503]
+  a.title         = 'Project Work Time and Check-Ins'
+  a.groups        = <<-CHECKINS
+## With Horace
 
 * 1:00 - Brett Grigsby
 * 1:30 - Drew Reynolds
@@ -190,6 +202,44 @@ For one section of this lesson, we'll do some work in pairs:
 * 1:00 - Max Tedford
 * 1:30 - Sally MacNicholas
 * 2:00 - Lev Kravinsky
+CHECKINS
+end
+
+a = Activity.create! do |a|
+  a.activity_type = :lesson
+  a.start         = 9
+  a.finish        = 12
+  a.cohorts       = [c1505]
+  a.instructors   = [cjorge]
+  a.location      = bwspace
+  a.title         = 'Multi-Tenancy Authorization'
+  a.content       = <<-CONTENT
+Learn about how to manage different user permissions using a service object.
+
+Before the class, please clone the lesson repo using the following command:
+
+```
+git clone -b multitenancy_authorization https://github.com/turingschool-examples/storedom.git multitenancy_authorization
+```
+
+The materials for this lesson are the following:
+
+* [Notes](https://www.dropbox.com/s/xebujx48iaf3vwl/Turing%20-%20Multitenancy%20Authorization%20%28Notes%29.pages?dl=0)
+* [Lesson Plan](https://github.com/turingschool/lesson_plans/blob/master/ruby_03-professional_rails_applications/multitenancy_authorization.markdown)
+* [Video](https://vimeo.com/137451107)
+CONTENT
+end
+
+a.activity_type # => "lesson"
+a.start # => 9
+a.finish # => 12
+a.location # => #<Location id: 1, name: "Big workspace", activity_id: 6>
+a.cohorts # => #<ActiveRecord::Associations::CollectionProxy [#<Cohort id: 4, name: "1505", status: "current">]>
+a.title # => "Multi-Tenancy Authorization"
+a.groups # => nil
+
+__END__
+
 
 ## 1505
 
