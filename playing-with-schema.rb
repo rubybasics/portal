@@ -448,13 +448,13 @@ def define_data
         MARKDOWN
       end
 
-      a.activity_type # => "lesson"
-      a.start # => 2015-08-26 02:00:00 -0600
-      a.finish # => 2015-08-26 04:00:00 -0600
-      a.cohorts # => #<ActiveRecord::Associations::CollectionProxy [#<Cohort id: 2, name: "1508", status: "current">]>
-      a.content # => "Remember when we said we want you to have *two* things to do at all times? Join Mike at the Mega Table to start into a second. You'll learn how to do cool\nand interesting things with Arrays and Hashes.\n\n[Exercises Repository](https://github.com/turingschool/ruby-exercises/tree/master/core-types)\n"
-      a.title # => "Array and Hash Exercises"
-      a.instructors # => #<ActiveRecord::Associations::CollectionProxy [#<Instructor id: 5, name: "Jeff Casimir">]>
+      expect(a.activity_type).to eq :lesson
+      expect(a.start).to eq Time.parse('2015-08-26 02:00:00 -0600')
+      expect(a.finish).to eq Time.parse('2015-08-26 04:00:00 -0600')
+      expect(a.cohorts).to eq [c1508]
+      expect(a.content).to eq "Remember when we said we want you to have *two* things to do at all times? Join Mike at the Mega Table to start into a second. You'll learn how to do cool\nand interesting things with Arrays and Hashes.\n\n[Exercises Repository](https://github.com/turingschool/ruby-exercises/tree/master/core-types)\n"
+      expect(a.title).to eq "Array and Hash Exercises"
+      expect(a.instructors).to eq [cjeff]
     end
   end
 
