@@ -1,27 +1,40 @@
 class CreateStructure < ActiveRecord::Migration
   def change
-    require File.expand_path('../../playing-with-schema.rb', __dir__)
-    define_schema(:pg)
-    define_models
+    connection.execute "CREATE TYPE activity_type AS ENUM ('daily_fact', 'warmup', 'lesson', 'work_time', 'homework');"
 
-    yesno "Define the data?" do
-      define_data
+    create_table :activities do |t|
+      t.column :activity_type, :activity_type
+      t.text   :title
+      t.text   :content
+      t.datetime :start
+      t.datetime :finish
+      t.text :groups
     end
 
-    yesno "Rollback?" do
-      $stdout.puts
-      $stdout.puts "\e[30;46m  ROLLING BACK!!  \e[0m"
-      $stdout.puts
-      $stderr.reopen '/dev/null' # for now, b/c we expect it to rollback
-      raise 'zomg!'
+    create_table :activities_to_cohorts do |t|
+      t.integer :activity_id
+      t.integer :cohort_id
     end
-  end
 
-  def yesno(question)
-    $stdout.puts "------------------------------"
-    $stdout.puts "#{question} (Y/n)"
-    $stdout.puts "------------------------------"
-    answer = $stdin.gets.to_s.chomp.downcase
-    yield if 'y' == (answer[0] || 'y')
+    create_table :activities_to_instructors do |t|
+      t.integer :activity_id
+      t.integer :instructor_id
+    end
+
+    connection.execute "CREATE TYPE status_type AS ENUM ('pending', 'current', 'graduated');"
+
+    create_table :cohorts do |t|
+      t.string :name
+      t.column :status, :status_type
+    end
+
+    create_table :instructors do |t|
+      t.string :name
+    end
+
+    create_table :locations do |t|
+      t.string :name
+      t.integer :activity_id
+    end
   end
 end

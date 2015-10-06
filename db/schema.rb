@@ -11,9 +11,34 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 0) do
+ActiveRecord::Schema.define(version: 20151005203248) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+# Could not dump table "activities" because of following StandardError
+#   Unknown type 'activity_type' for column 'activity_type'
+
+  create_table "activities_to_cohorts", force: true do |t|
+    t.integer "activity_id"
+    t.integer "cohort_id"
+  end
+
+  create_table "activities_to_instructors", force: true do |t|
+    t.integer "activity_id"
+    t.integer "instructor_id"
+  end
+
+# Could not dump table "cohorts" because of following StandardError
+#   Unknown type 'status_type' for column 'status'
+
+  create_table "instructors", force: true do |t|
+    t.string "name"
+  end
+
+  create_table "locations", force: true do |t|
+    t.string  "name"
+    t.integer "activity_id"
+  end
 
 end
