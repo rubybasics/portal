@@ -44,7 +44,7 @@ gem 'deject'                                           # dependency injection
 # gem 'debugger', group: [:development, :test]
 
 group :development, :test do
-  gem 'rspec-rails', '~> 3.0.0'
+  gem 'rspec-rails', '~> 3.3.0'
   gem 'pry'
   gem 'what_weve_got_here_is_an_error_to_communicate'
 end
