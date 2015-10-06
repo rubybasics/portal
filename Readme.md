@@ -6,13 +6,33 @@ Turingschool Portal
 
 Currently, it only authenticates users (ie no content yet).
 
+TODO
+----
+
+* today.turing.io
+  * Portal: Serve the data in an API (integration test)
+  * today-json: probably put the code here
+  * today.turing.io:
+    * pull the code in and generate content
+    * make sure we can handle API days and pre-existing markdown days
+* Portal
+  * Expose an admin interface for updating the data
+  * Don't spend much time on students / cohorts,
+  * b/c we prob want that from enroll
+* Pull data from Enroll
+* Add student schedules to Portal
+* Add attendance to Portal
+
 Things to remember when making content:
 ---------------------------------------
 
 * Holistic understanding
-  * For each feature, a student should understand why they are doing a thing, or why it is available. e.g. a link on quizzes explaining why quizzes are a thing, how to use them, what they should get out of them
+  * For each feature, a student should understand why they are doing a thing,
+    or why it is available. e.g. a link on quizzes explaining why quizzes are a thing,
+    how to use them, what they should get out of them
 * Productive outlet for frustration
-  * For each feature, a student should have a productive way to channel their frustration. E.g. a link to edit material, a link to report problems.
+  * For each feature, a student should have a productive way to channel their frustration.
+    E.g. a link to edit material, a link to report problems.
 
 Dump of notes Josh had written down for things I want to do:
 ------------------------------------------------------------
@@ -55,6 +75,10 @@ portal
       hopefully helps us achieve an intense learning environment
         I expect imposing it to do much more harm than good
         but with this approach, their own excitement and motivation drives the behaviour
+      maybe a few topic ideas to get the wheels in their brain turning, e.g.
+        What would make the space mroe enjoyable to be in
+        What would make this week's material better for future groups?
+        What would might be another interesting way to address a problem from your last project?
     cheatsheets
       Get them taking notes in a way they can reference back to later,
       share with others (builds community, gives them a reason to be excited about studying, as this is what they are doing when they make cheatsheets)
