@@ -1,7 +1,12 @@
 require 'rails_helper'
+require 'jsl/today_json/web_clients/rack'
 require_relative '../../app/models/models'
 
 RSpec.describe 'Integration test' do
+  def at(hours, minutes=0)
+    sprintf "%d:%02d", hours, minutes
+  end
+
   it 'can represent all the data from 2015-08-26, and generate content for today.turing.io' do
     c1510 = Cohort.create! name: '1510', status: :pending
     c1508 = Cohort.create! name: '1508', status: :current
@@ -16,25 +21,21 @@ RSpec.describe 'Integration test' do
     cmejia  = Instructor.create! name: 'Josh Mejia'
     cjeff   = Instructor.create! name: 'Jeff Casimir'
 
-    bwspace = Location.create! name: "Big workspace"
+    bwspace     = Location.create! name: "Big workspace"
     classroom_b = Location.create! name: "Classroom B"
     classroom_a = Location.create! name: "Classroom A"
 
     date = Time.parse '2015-08-26'
 
-    Object.send :define_method, :at do |hours, minutes=0|
-      date + hours.hours + minutes.minutes
-    end
-
-    a = Activity.create! do |a|
+    Activity.create! do |a|
       a.activity_type = :daily_fact
+      a.date          = date
       a.content       = 'Today, in 1952, Will Shortz was born.'
-      a.start         = date
-      a.finish        = date + 1.day
     end
 
-    a = Activity.create! do |a|
+    Activity.create! do |a|
       a.activity_type = :warmup
+      a.date          = date
       a.cohorts       = Cohort.current
       a.start         = at 8, 30
       a.finish        = at 9
@@ -66,8 +67,9 @@ RSpec.describe 'Integration test' do
       MARKDOWN
     end
 
-    a = Activity.create! do |a|
+    Activity.create! do |a|
       a.activity_type = :lesson
+      a.date          = date
       a.start         = at 9
       a.finish        = at 9, 30
       a.instructors   = [Instructor.first]
@@ -79,8 +81,9 @@ RSpec.describe 'Integration test' do
       MARKDOWN
     end
 
-    a = Activity.create! do |a|
+    Activity.create! do |a|
       a.activity_type = :lesson
+      a.date          = date
       a.start         = at 9
       a.finish        = at 9, 30
       a.instructors   = [chorace]
@@ -92,8 +95,9 @@ RSpec.describe 'Integration test' do
       MARKDOWN
     end
 
-    a = Activity.create! do |a|
+    Activity.create! do |a|
       a.activity_type = :lesson
+      a.date          = date
       a.start         = at 9, 30
       a.finish        = at 12
       a.instructors   = [chorace]
@@ -115,8 +119,9 @@ RSpec.describe 'Integration test' do
       MARKDOWN
     end
 
-    a = Activity.create! do |a|
+    Activity.create! do |a|
       a.activity_type = :work_time
+      a.date          = date
       a.start         = at 1
       a.finish        = at 4
       a.cohorts       = [c1503]
@@ -144,10 +149,11 @@ RSpec.describe 'Integration test' do
       MARKDOWN
     end
 
-    a = Activity.create! do |a|
+    Activity.create! do |a|
       a.activity_type = :work_time
-      a.start         = 1
-      a.finish        = 4
+      a.date          = date
+      a.start         = at 1
+      a.finish        = at 4
       a.cohorts       = [c1505]
       a.instructors   = [cjorge]
       a.location      = bwspace
@@ -158,8 +164,9 @@ RSpec.describe 'Integration test' do
       MARKDOWN
     end
 
-    a = Activity.create! do |a|
+    Activity.create! do |a|
       a.activity_type = :lesson
+      a.date          = date
       a.start         = at 9
       a.finish        = at 9, 30
       a.cohorts       = [c1507]
@@ -168,8 +175,9 @@ RSpec.describe 'Integration test' do
       a.title         = 'CRUD Homework Review'
     end
 
-    a = Activity.create! do |a|
+    Activity.create! do |a|
       a.activity_type = :lesson
+      a.date          = date
       a.start         = at 9, 30
       a.finish        = at 12
       a.cohorts       = [c1507]
@@ -181,8 +189,9 @@ RSpec.describe 'Integration test' do
       MARKDOWN
     end
 
-    a = Activity.create! do |a|
+    Activity.create! do |a|
       a.activity_type = :lesson
+      a.date          = date
       a.start         = at 1
       a.finish        = at 1, 30
       a.cohorts       = [c1507]
@@ -194,8 +203,9 @@ RSpec.describe 'Integration test' do
       MARKDOWN
     end
 
-    a = Activity.create! do |a|
+    Activity.create! do |a|
       a.activity_type = :lesson
+      a.date          = date
       a.start         = at 1, 30
       a.finish        = at 4
       a.cohorts       = [c1507]
@@ -207,9 +217,9 @@ RSpec.describe 'Integration test' do
       MARKDOWN
     end
 
-    # need to add distinction between Echo and Foxtrot somehow
-    a = Activity.create! do |a|
+    Activity.create! do |a|
       a.activity_type = :lesson
+      a.date          = date
       a.start         = at 9
       a.finish        = at 10, 30
       a.cohorts       = [c1508]
@@ -221,8 +231,9 @@ RSpec.describe 'Integration test' do
       MARKDOWN
     end
 
-    a = Activity.create! do |a|
+    Activity.create! do |a|
       a.activity_type = :lesson
+      a.date          = date
       a.start         = at 10, 30
       a.finish        = at 12
       a.cohorts       = [c1508]
@@ -234,8 +245,9 @@ RSpec.describe 'Integration test' do
       MARKDOWN
     end
 
-    a = Activity.create! do |a|
+    Activity.create! do |a|
       a.activity_type = :lesson
+      a.date          = date
       a.start         = at 1
       a.finish        = at 2, 30
       a.cohorts       = [c1508]
@@ -253,8 +265,9 @@ RSpec.describe 'Integration test' do
       MARKDOWN
     end
 
-    a = Activity.create! do |a|
+    Activity.create! do |a|
       a.activity_type = :lesson
+      a.date          = date
       a.start         = at 2, 30
       a.finish        = at 3
       a.cohorts       = [c1508]
@@ -273,8 +286,9 @@ RSpec.describe 'Integration test' do
       MARKDOWN
     end
 
-    a = Activity.create! do |a|
+    Activity.create! do |a|
       a.activity_type = :lesson
+      a.date          = date
       a.start         = at 3
       a.finish        = at 4
       a.cohorts       = [c1508]
@@ -290,8 +304,9 @@ RSpec.describe 'Integration test' do
       MARKDOWN
     end
 
-    a = Activity.create! do |a|
+    Activity.create! do |a|
       a.activity_type = :homework
+      a.date          = date
       a.start         = at 4
       a.finish        = at 32
       a.cohorts       = [c1508]
@@ -325,8 +340,9 @@ RSpec.describe 'Integration test' do
       MARKDOWN
     end
 
-    a = Activity.create! do |a|
+    Activity.create! do |a|
       a.activity_type = :lesson
+      a.date          = date
       a.instructors   = [cjeff]
       a.cohorts       = [c1508]
       a.location      = classroom_a
@@ -336,8 +352,9 @@ RSpec.describe 'Integration test' do
       a.content       = 'Join Jeff at the Mega Table.'
     end
 
-    a = Activity.create! do |a|
+    Activity.create! do |a|
       a.activity_type = :lesson
+      a.date          = date
       a.instructors   = [cjeff]
       a.cohorts       = [c1508]
       a.location      = classroom_a
@@ -347,8 +364,9 @@ RSpec.describe 'Integration test' do
       a.content       = "It's time to start your first project, [Mastermind](https://github.com/turingschool/curriculum/blob/master/source/projects/mastermind.markdown). Meet Jeff at the Mega Table to discuss and plan."
     end
 
-    a = Activity.create! do |a|
+    Activity.create! do |a|
       a.activity_type = :lesson
+      a.date          = date
       a.instructors   = [cjeff]
       a.cohorts       = [c1508]
       a.location      = classroom_a
@@ -363,12 +381,30 @@ RSpec.describe 'Integration test' do
       MARKDOWN
     end
 
-    expect(a.activity_type.to_sym).to eq :lesson
-    expect(a.start).to eq Time.parse('2015-08-26 02:00:00 -0600')
-    expect(a.finish).to eq Time.parse('2015-08-26 04:00:00 -0600')
-    expect(a.cohorts).to eq [c1508]
-    expect(a.content).to eq "Remember when we said we want you to have *two* things to do at all times? Join Mike at the Mega Table to start into a second. You'll learn how to do cool\nand interesting things with Arrays and Hashes.\n\n[Exercises Repository](https://github.com/turingschool/ruby-exercises/tree/master/core-types)\n"
-    expect(a.title).to eq "Array and Hash Exercises"
-    expect(a.instructors).to eq [cjeff]
+    Activity.create! do |a|
+      a.activity_type = :lesson
+      a.date          = date + 1
+      a.cohorts       = [c1508]
+      a.title         = 'Tomorrows lesson'
+      a.content       = <<-MARKDOWN.gsub(/^ */, '')
+      this one should not show up b/c its on the wrong date
+      MARKDOWN
+    end
+
+    expect(Activity.count).to_not eq 0
+
+    session    = Rack::Test::Session.new(Rails.application)
+    web_client = Jsl::TodayJson::WebClients::Rack.new session
+    today_json = Jsl::TodayJson::Client.new(web_client)
+    day        = today_json.for(date)
+    markdown   = day.to_markdown
+
+    expect(markdown).to_not include 'Tomorrows lesson'
+
+    expect(markdown).to eq <<-MARKDOWN.gsub(/^ */,'')
+    # 2015-08-26
+
+    Today, in 1952, Will Shortz was born.
+    MARKDOWN
   end
 end

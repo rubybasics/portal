@@ -4,6 +4,9 @@ class Activity < ActiveRecord::Base
   has_many :cohorts, through: :activities_to_cohorts
   has_many :instructors, through: :activities_to_instructors
   has_one :location
+
+  validates :activity_type, presence: true
+  validates :date, presence: true
 end
 
 class ActivityToCohort < ActiveRecord::Base

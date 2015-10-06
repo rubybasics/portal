@@ -6,9 +6,10 @@ class CreateStructure < ActiveRecord::Migration
       t.column :activity_type, :activity_type
       t.text   :title
       t.text   :content
-      t.datetime :start
-      t.datetime :finish
-      t.text :groups
+      t.date   :date
+      t.time   :start
+      t.time   :finish
+      t.text   :groups
     end
 
     create_table :activities_to_cohorts do |t|
