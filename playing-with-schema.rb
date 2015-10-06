@@ -84,7 +84,7 @@ end
   end
 end
 
-def define_data
+def define_data(run_tests=true)
   require 'rspec/core'
   integration_tests = RSpec.describe 'Integration test' do
     it 'can represent all the data from 2015-08-26, and generate content for today.turing.io' do
@@ -448,7 +448,7 @@ def define_data
         MARKDOWN
       end
 
-      expect(a.activity_type).to eq :lesson
+      expect(a.activity_type.to_sym).to eq :lesson
       expect(a.start).to eq Time.parse('2015-08-26 02:00:00 -0600')
       expect(a.finish).to eq Time.parse('2015-08-26 04:00:00 -0600')
       expect(a.cohorts).to eq [c1508]
@@ -458,18 +458,20 @@ def define_data
     end
   end
 
-  require 'error_to_communicate/rspec_formatter'
-  if $stdout.tty?
-    RSpec.configure do |c|
-      c.color     = true
-      c.formatter = ErrorToCommunicate::RSpecFormatter
+  if run_tests
+    require 'error_to_communicate/rspec_formatter'
+    if $stdout.tty?
+      RSpec.configure do |c|
+        c.color     = true
+        c.formatter = ErrorToCommunicate::RSpecFormatter
+      end
     end
-  end
 
-  RSpec.configuration.reporter.tap do |reporter|
-    reporter.start 1
-    integration_tests.run reporter
-    reporter.finish
+    RSpec.configuration.reporter.tap { |reporter|
+      reporter.start 1
+      integration_tests.run reporter
+      reporter.finish
+    }
   end
 end
 
