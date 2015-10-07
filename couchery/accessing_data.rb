@@ -1,7 +1,4 @@
 # setup couch
-require 'couchrest'
-
-db = CouchRest.database!("http://127.0.0.1:5984/turing-portal-test")
 
 # google.calendars
 #   calendar_id
@@ -24,16 +21,11 @@ db = CouchRest.database!("http://127.0.0.1:5984/turing-portal-test")
 #   start_time (event.start_time # => 2015-02-13T07:00:00Z)
 #   end_time
 
-save_event = lambda do |event|
-  # this "update or create" totally doesn't work, and I'm getting duplicate events :/
-  begin
-    doc = db.get event.id
-  rescue RestClient::ResourceNotFound
-    doc = CouchRest::Document.new
-  end
+# Day = Struct.new :
 
-  # if it dne, create a new doc
-  doc.id                   = event.id           # couch id is the google calendar id
+save_event = lambda do |event|
+  doc = {}
+  doc[:id]                 = event.id           # couch id is the google calendar id
   doc[:type]               = 'google.events'
   doc[:start_time]         = event.start_time   # eg "2015-02-13T07:00:00Z"
   doc[:end_time]           = event.end_time     # eg "2015-02-18T07:00:00Z"
@@ -41,15 +33,12 @@ save_event = lambda do |event|
   doc[:title]              = event.title        # eg "Welcome & Staff Intros"
   doc[:location]           = event.location
   doc[:calendar_html_link] = event.html_link    # eg "https://www.google.com/calendar/event?eid=dTFhYjAzMzJuYjNkYTdna282aTVuZnU4MGMgY2FzaW1pcmNyZWF0aXZlLmNvbV81OWs4bXNycmMyZGRoY3Y3ODd2dWJ2cDBzNEBn"
-  doc[:calendar_id]        = '??'               # going to need to get this off the key we created the db with, it doesn't seem to store this
 
   # this is probably wrong, b/c its directly saving google calendar json in our db as if its our document
   doc[:attendees]          = event.attendees    # => [{"email"=>"team@turing.io",
                                                        #      "displayName"=>"Turing Team",
                                                        #      "responseStatus"=>"needsAction"
                                                        #    }]
-
-  db.save_doc(doc)
   doc
 end
 
@@ -66,7 +55,9 @@ cal = Google::Calendar.new :client_id     => ENV['GOOGLE_CLIENT_ID'],
 cal.login_with_refresh_token(ENV['GOOGLE_REFRESH_TOKEN'])
 calendar_events = cal.find_events_in_range Date.today.to_time, (Date.today + 7).to_time
 
-calendar_events.each do |calendar_event|
-  couch_event = save_event.call calendar_event
-  p couch_event
+events = calendar_events.map do |calendar_event|
+  save_event.call calendar_event
 end
+
+require "pry"
+binding.pry

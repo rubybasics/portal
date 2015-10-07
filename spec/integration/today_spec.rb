@@ -25,7 +25,7 @@ RSpec.describe 'Integration test' do
     classroom_b = Location.create! name: "Classroom B"
     classroom_a = Location.create! name: "Classroom A"
 
-    date = Time.parse '2015-08-26'
+    date = Date.parse '2015-08-26'
 
     Activity.create! do |a|
       a.activity_type = :daily_fact

@@ -4,10 +4,18 @@ Notes
 Stats:
 ------
 
+```
+config.ru
+  test Portal::LoadEnv.call(ENV) # => {calendars: [GoogleCalendar], db: CouchRest}
+  loads env vars, sets env[:calendars] = PortalDependencies.calendars
+```
+
+
 - [ ] Import data from Google Calendar
+  - [ ] authenticate all calendars
   - [x] Can set events into couch db
   - [ ] Track calendars via env var and table
-  - [ ] Track attendees
+  - [ ] Track attendees as an array of email addresses
 - [ ] Translate into an internal representation
 - [ ] idk, figure out more shit
 
