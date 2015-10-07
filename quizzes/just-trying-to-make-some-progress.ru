@@ -18,15 +18,38 @@ class HTMLwithPygments < Redcarpet::Render::HTML
 end
 
 def to_html(markdown)
+  markdown      = markdown.gsub(/```.*?```/m) { |str| "\n#{str}" }
+  leading_space = (markdown.lines[1] || '')[/^\s*/].length
+  markdown      = markdown.gsub(/^ {0,#{leading_space}}/, '')
   Redcarpet::Markdown.new(HTMLwithPygments,
-                           space_after_headers: true,
-                           fenced_code_blocks:  true,
-                           autolink:            true,
-                      ).render(markdown)
+                          space_after_headers: true,
+                          fenced_code_blocks:  true,
+                          autolink:            true,
+                         ).render(markdown)
 end
 
 questions =
-[{version: 1,
+[
+{ version:  1,
+  question: "This is a
+```ruby
+test
+```
+",
+  options: {a: 'a', b: 'b'},
+  answer: :a,
+  hint: "This is a
+```ruby
+test
+```
+",
+further_thought: "This is a
+```ruby
+test
+```
+",
+},
+{ version: 1,
   question: "How do you find out whether an object has a method?",
   metadata: {},
   options: {
@@ -94,7 +117,8 @@ end
   },
   answer: :b,
   hint: 'Encapsulation is about exposing the idea of what should be done without exposing the details of how it should be done.',
-  further_thought: 'Encapsulation is about exposing the idea of what should be done without exposing the details of how it should be done.
+  further_thought: <<-MARKDOWN
+    Encapsulation is about exposing the idea of what should be done without exposing the details of how it should be done.
     In the first example, Medusa can do what she wants to: turn the person to stone, but she also knows *how* to do it: she sets its `stoned` variable to true.
     In the second example, she is able to do it, but *does not* know how to. She just `stone`s the person, but leaves the details of what that means
     up to the `stone` method.
@@ -129,7 +153,8 @@ end
     like our Person, and some other class that\'s just like our Medusa either will or won\'t be coupled to it, but the system will be big enough
     that you  won\'t even know that class exists... until you break everything and then have to go hunt down all the classes that knew about
     the internal representation you changed ...Hopefully your tests are good enough to find this, otherwise you might not even know until it gets
-    pushed to production and your site goes down.'
+    pushed to production and your site goes down.
+  MARKDOWN
 }
 ]
 
@@ -139,12 +164,10 @@ html_questions = questions.map { |question|
   answer          = question.fetch :answer   # :a
   hint            = question.fetch :hint     # 'think about such and such'
   further_thought = question.fetch :further_thought # 'lots of further thought, with newlines and such'
-  further_thought.gsub! /^\s*/, ''
-  hint.gsub!            /^\s*/, ''
 
   html = ""
   html << %'<div class="question">\n'
-    html << "<h3>#{q}</h3>\n"
+    html << "<h3>#{to_html q}</h3>\n"
     html << "\n"
 
     html << "<div class='body'>\n"

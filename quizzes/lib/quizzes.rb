@@ -1,4 +1,4 @@
 module Quizzes
 end
 
-require 'quizzes/question'
+require 'quizzes/quiz'

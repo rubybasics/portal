@@ -1,10 +1,6 @@
 require 'spec_helper'
 
 RSpec.describe Quizzes::Persister do
-  def assert_equal(expected, actual)
-    expect(expected).to eq actual
-  end
-
   context 'questions' do
     it 'creates and loads a question' do
       q1 = Quizzes::Question.new \
@@ -24,13 +20,52 @@ RSpec.describe Quizzes::Persister do
       assert_equal q2.hint,            'some hint'
       assert_equal q2.further_thought, 'some thoughts'
     end
-
-    # it 'knows whether a quiz is valid' do
-    #   q1 = Quizzes::Question.new question: 'why?', options: {a: 'a', b: 'b', c: 'c'}, answer: :b, hint: 'some hint', further_thought: 'some thoughts'
-    #   expect(q1).to eq q2
-    # end
   end
 
-  it 'saves and loads a quiz'
-  it 'does not load a quiz\'s questions that don\'t belong to it'
+  it 'saves and loads quizzes' do
+    quiz1 = Quizzes::Quiz.new\
+      name:        'q1',
+      description: 'q1 description',
+      questions:   [
+        {question:        'q1.1',
+         options:         {'q1.1 option1' => 'q1.1 value1'},
+         answer:          'q1.1 option1',
+         hint:            'q1.1 hint',
+         further_thought: 'q1.1 further thought'
+        },
+        {question:        'q1.2',
+         options:         {'q1.2 option1' => 'q1.2 value1'},
+         answer:          'q1.2 option1',
+         hint:            'q1.2 hint',
+         further_thought: 'q1.2 further thought'
+        },
+      ]
+    quiz2 = Quizzes::Quiz.new\
+      name:        'q2',
+      description: 'q2 description',
+      questions:   [
+        {question:        'q2.1',
+         options:         {'q2.1 option1' => 'q2.1 value1'},
+         answer:          'q2.1 option1',
+         hint:            'q2.1 hint',
+         further_thought: 'q2.1 further thought'
+        },
+        {question:        'q2.2',
+         options:         {'q2.2 option1' => 'q2.2 value1'},
+         answer:          'q2.2 option1',
+         hint:            'q2.2 hint',
+         further_thought: 'q2.2 further thought'
+        },
+      ]
+    persister.create_quiz quiz1
+    persister.create_quiz quiz2
+
+    quiz1_loaded = persister.load_quiz quiz1.id
+    quiz2_loaded = persister.load_quiz quiz2.id
+
+    assert_equal quiz1, quiz1_loaded
+    assert_equal quiz2, quiz2_loaded
+  end
+
+  it 'raises an error if told to create a quiz that already exists'
 end

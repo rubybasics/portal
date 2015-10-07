@@ -43,6 +43,13 @@ RSpec.describe Quizzes::Question do
     assert_equal strings.further_thought, 'some thoughts'
   end
 
+  it 'is equal to another quiz if they have all the same attributes'
+
   it 'performs this normalization on assignment'
   # skipped b/c it doesn't
+
+  # it 'knows whether a quiz is valid' do
+  #   q1 = Quizzes::Question.new question: 'why?', options: {a: 'a', b: 'b', c: 'c'}, answer: :b, hint: 'some hint', further_thought: 'some thoughts'
+  #   expect(q1).to eq q2
+  # end
 end
