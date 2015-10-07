@@ -13,14 +13,14 @@ TODO
   * √ hook up to today-json
     * Turn it into a gem
     * Point Bundler at the local repo
-  * Get heading and daily fact rendering via the integration test
+  * √ Get heading and daily fact rendering via the integration test
     * controller / test / pulling the big pieces out to independent files
-  * today.turing.io onto a different branch
+  * √ today.turing.io onto a different branch
   * hook today.turing.io up to today-json
     * Point Bundler at the local repo
   * Make sure today-json can render it from the api
   * Make sure today-json can render the old markdown
-* Portal gets a real solution for secret env vars (Figaro?)
+* √ Portal gets a real solution for secret env vars (Figaro?)
 * Portal
   * Expose an admin interface for updating the data
   * Don't spend much time on students / cohorts,
