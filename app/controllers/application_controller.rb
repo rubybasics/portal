@@ -6,7 +6,7 @@ class ApplicationController < ActionController::Base
 
   before_action :require_login
   before_action :require_invitation_or_admin
-  before_action :set_date
+  before_action :todays_date
 
   helper_method :current_user
   def current_user
@@ -14,7 +14,7 @@ class ApplicationController < ActionController::Base
   end
 
   helper_method :todays_date
-  def set_date
+  def todays_date
     @todays_date ||= Date.current
   end
 
