@@ -1,5 +1,3 @@
-require_relative '../models/models'
-
 class ApiController < ActionController::Base
   respond_to :json
 

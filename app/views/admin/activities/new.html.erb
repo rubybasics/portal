@@ -4,7 +4,7 @@
   <%= f.text_field :title %><br />
 
   <%= f.label :activity_type %>
-  <%= collection_select(:activity_type, :activity_id, ['daily_fact', 'warmup', 'lesson', 'work_time', 'homework'], :id, :name,include_blank: 'Please select an activity type') %>
+  <%= f.select(:activity_type, ActivityType.all.map {|a| [a.name.gsub('_', ' '), a.name]}, include_blank: 'Please select an activity type') %>
 
   <%= f.label :location %>
     <% Location.all.each do |location| %>

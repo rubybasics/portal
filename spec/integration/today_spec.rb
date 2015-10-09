@@ -1,6 +1,5 @@
 require 'rails_helper'
 require 'jsl/today_json/web_clients/rack'
-require_relative '../../app/models/models'
 
 RSpec.describe 'Integration test' do
   def at(hours, minutes=0)

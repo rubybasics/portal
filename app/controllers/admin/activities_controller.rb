@@ -4,7 +4,8 @@ class Admin::ActivitiesController < ApplicationController
   end
 
   def create
-    require 'pry'; binding.pry
+    Activity.create(activity_params)
+    redirect_to admin_today_path(params[:date])
   end
 
   private
@@ -14,6 +15,7 @@ class Admin::ActivitiesController < ApplicationController
                                             :start,
                                             :finish,
                                             :content,
+                                            :activity_type,
                                             location_ids: [],
                                             instructor_ids: [],
                                             cohorts_ids: [])
@@ -25,6 +27,7 @@ class Admin::ActivitiesController < ApplicationController
     hash[:instructor_ids] = i_ids
     hash[:location_ids]   = l_ids
     hash[:cohort_ids]     = c_ids
+    hash[:date]           = params[:date]
     hash
   end
 end
