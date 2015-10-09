@@ -156,7 +156,7 @@ RSpec.describe 'Integration test' do
       a.finish        = at 4
       a.cohorts       = [c1505]
       a.instructors   = [cjorge]
-      a.location      = bwspace
+      a.locations     = [bwspace]
       a.title         = 'Project Work Time'
       a.content       = <<-MARKDOWN.gsub(/^ */, '')
       Work on your Pivot projects with your teams. Remember to focus on your user stories. Iteration 1 is due on Thursday afternoon.
@@ -171,7 +171,7 @@ RSpec.describe 'Integration test' do
       a.finish        = at 9, 30
       a.cohorts       = [c1507]
       a.instructors   = [cmejia]
-      a.location      = classroom_b
+      a.locations     = [classroom_b]
       a.title         = 'CRUD Homework Review'
     end
 
@@ -182,7 +182,7 @@ RSpec.describe 'Integration test' do
       a.finish        = at 12
       a.cohorts       = [c1507]
       a.instructors   = [cmejia]
-      a.location      = classroom_b
+      a.locations      = [classroom_b]
       a.title         = 'Model Testing in Sinatra'
       a.content       = <<-MARKDOWN.gsub(/^ */, '')
       [Lesson Plan](https://github.com/turingschool/lesson_plans/blob/master/ruby_02-web_applications_with_ruby/model_testing_in_sinatra.markdown)
@@ -196,7 +196,7 @@ RSpec.describe 'Integration test' do
       a.finish        = at 1, 30
       a.cohorts       = [c1507]
       a.instructors   = [cmejia]
-      a.location      = classroom_b
+      a.locations      = [classroom_b]
       a.title         = 'Nokogiri'
       a.content       = <<-MARKDOWN.gsub(/^ */, '')
       Enjoy this [challenge](https://github.com/turingschool/challenges/blob/master/parsing_html.markdown).
@@ -210,7 +210,7 @@ RSpec.describe 'Integration test' do
       a.finish        = at 4
       a.cohorts       = [c1507]
       a.instructors   = [cmejia]
-      a.location      = classroom_b
+      a.locations      = [classroom_b]
       a.title         = 'Acceptance Testing with Capybara'
       a.content       = <<-MARKDOWN.gsub(/^ */, '')
       [Lesson Plan](https://github.com/turingschool/lesson_plans/blob/master/ruby_02-web_applications_with_ruby/feature_testing_in_sinatra_with_capybara.markdown)
@@ -224,7 +224,7 @@ RSpec.describe 'Integration test' do
       a.finish        = at 10, 30
       a.cohorts       = [c1508]
       a.instructors   = [cjeff]
-      a.location      = classroom_a
+      a.locations      = [classroom_a]
       a.title         = 'Introducing Arrays'
       a.content       = <<-MARKDOWN.gsub(/^ */, '')
       Classroom A with Jeff to [learn about arrays and hashes](https://github.com/turingschool/lesson_plans/blob/master/ruby_01-object_oriented_programming_with_ruby/arrays_and_hashes.markdown).
@@ -238,7 +238,7 @@ RSpec.describe 'Integration test' do
       a.finish        = at 12
       a.cohorts       = [c1508]
       a.instructors   = [cjeff]
-      a.location      = classroom_a
+      a.locations      = [classroom_a]
       a.title         = 'Introducing Hashes'
       a.content       = <<-MARKDOWN.gsub(/^ */, '')
       Classroom A with Jeff to [learn about arrays and hashes](https://github.com/turingschool/lesson_plans/blob/master/ruby_01-object_oriented_programming_with_ruby/arrays_and_hashes.markdown).
@@ -252,7 +252,7 @@ RSpec.describe 'Integration test' do
       a.finish        = at 2, 30
       a.cohorts       = [c1508]
       a.instructors   = [ccheek]
-      a.location      = classroom_a
+      a.locations      = [classroom_a]
       a.title         = 'How Testing Works'
       a.content       = <<-MARKDOWN.gsub(/^ */, '')
       We'll be working in this repository: [https://github.com/JoshCheek/how-to-test](https://github.com/JoshCheek/how-to-test).
@@ -272,7 +272,7 @@ RSpec.describe 'Integration test' do
       a.finish        = at 3
       a.cohorts       = [c1508]
       a.instructors   = [ccheek]
-      a.location      = classroom_a
+      a.locations      = [classroom_a]
       a.title         = 'Sorting Suite Kickoff'
       a.content       = <<-MARKDOWN.gsub(/^ */, '')
       Stay at the front of Classroom A for sorting algorithms, y'all [https://vimeo.com/channels/sortalgorithms](https://vimeo.com/channels/sortalgorithms).
@@ -293,7 +293,7 @@ RSpec.describe 'Integration test' do
       a.finish        = at 4
       a.cohorts       = [c1508]
       a.instructors   = [ccheek]
-      a.location      = classroom_a
+      a.locations      = [classroom_a]
       a.title         = 'TDD Tutorial'
       a.content       = <<-MARKDOWN.gsub(/^ */, '')
       Big Surprise, you are in the front of Classroom A.
@@ -345,7 +345,7 @@ RSpec.describe 'Integration test' do
       a.date          = date
       a.instructors   = [cjeff]
       a.cohorts       = [c1508]
-      a.location      = classroom_a
+      a.locations      = [classroom_a]
       a.start         = at 1
       a.finish        = at 1, 30
       a.title         = 'SuperFizz Recap'
@@ -357,7 +357,7 @@ RSpec.describe 'Integration test' do
       a.date          = date
       a.instructors   = [cjeff]
       a.cohorts       = [c1508]
-      a.location      = classroom_a
+      a.locations      = [classroom_a]
       a.start         = at 1, 30
       a.finish        = at 2
       a.title         = 'Mastermind kickoff'
@@ -369,7 +369,7 @@ RSpec.describe 'Integration test' do
       a.date          = date
       a.instructors   = [cjeff]
       a.cohorts       = [c1508]
-      a.location      = classroom_a
+      a.locations      = [classroom_a]
       a.start         = at 2
       a.finish        = at 4
       a.title         = 'Array and Hash Exercises'
