@@ -22,6 +22,11 @@ class CreateStructure < ActiveRecord::Migration
       t.integer :instructor_id
     end
 
+    create_table :activities_to_locations do |t|
+      t.integer :activity_id
+      t.integer :location_id
+    end
+
     connection.execute "CREATE TYPE status_type AS ENUM ('pending', 'current', 'graduated');"
 
     create_table :cohorts do |t|
