@@ -1,5 +1,5 @@
 Rails.application.routes.draw do
-  get '/' => 'site#root'
+  get '/' => 'site#root', as: :root
   get '/api/today.:format' => 'api#today'
 
   namespace :admin do
@@ -10,4 +10,12 @@ Rails.application.routes.draw do
       resources :activities, only: [:new]
     end
   end
+
+  # development only
+  get '/development/admin'            => 'development#admin'
+  get '/development/env'      => 'development#show_env'
+  get '/development/session'  => 'development#show_session'
+  get '/development/me'       => 'development#show_user'
+  get '/development/reset'    => 'development#reset'
+  get '/development/pry'      => 'development#pry'
 end
