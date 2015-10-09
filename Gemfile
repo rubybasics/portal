@@ -2,7 +2,6 @@ source 'https://rubygems.org'
 fury_url = ENV['GEMFURY_URL']
 source fury_url if fury_url
 
-
 gem 'rails', '4.1.6'
 gem 'pg'
 gem 'sass-rails', '~> 4.0.3'
@@ -24,5 +23,6 @@ group :test do
   gem 'cucumber-rails', :require => false
   gem 'database_cleaner'
   gem 'mrspec'
-  gem 'jsl-today_json', path: '../today_json'
+  gem 'jsl-today_json', path: '../../today_json'
+  gem 'launchy'
 end

@@ -6,10 +6,16 @@ class ApplicationController < ActionController::Base
 
   before_action :require_login
   before_action :require_invitation_or_admin
+  before_action :todays_date
 
   helper_method :current_user
   def current_user
     @current_user ||= user_repository.find session[:user_id]
+  end
+
+  helper_method :todays_date
+  def todays_date
+    @todays_date ||= Date.current
   end
 
   private
