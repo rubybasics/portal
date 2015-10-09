@@ -7,12 +7,12 @@ Rails.application.routes.draw do
     get '/today/:date' => 'today#show', as: :today
 
     scope '/today/:date' do
-      resources :activities, only: [:new]
+      resources :activities, only: [:index, :new]
     end
   end
 
   # development only
-  get '/development/admin'            => 'development#admin'
+  get '/development/admin'    => 'development#admin'
   get '/development/env'      => 'development#show_env'
   get '/development/session'  => 'development#show_session'
   get '/development/me'       => 'development#show_user'

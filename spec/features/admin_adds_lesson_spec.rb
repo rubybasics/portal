@@ -3,6 +3,7 @@ require 'rails_helper'
 RSpec.describe 'Admin adds lesson to schedule', type: :feature do
   it 'adds a lesson to the schedule' do
     today_is '2015-08-10'
+    im_an_admin!
 
     visit '/admin'
     expect(current_path).to eq admin_path

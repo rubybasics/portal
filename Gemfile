@@ -23,6 +23,6 @@ group :test do
   gem 'cucumber-rails', :require => false
   gem 'database_cleaner'
   gem 'mrspec'
-  gem 'jsl-today_json', path: '../../today_json'
+  gem 'jsl-today_json', path: '../today_json'
   gem 'launchy'
 end
