@@ -13,7 +13,6 @@ RSpec.describe 'Admin adds lesson to schedule', type: :feature do
     Cohort.create! name: '1507', status: :current
   end
 
-
   it 'adds a lesson to the schedule' do
     today_is '2015-08-10'
     im_an_admin!
