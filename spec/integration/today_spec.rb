@@ -416,4 +416,12 @@ RSpec.describe 'Integration test' do
     Activity.create! activity_type: :daily_fact, date: '2000-01-01', content: 'some fact'
     expect(client.for '2000-01-01').to be_scheduled
   end
+
+  it 'lists out all known dates in chronological order' do
+    Activity.create! activity_type: :daily_fact, date: '2000-10-05'
+    Activity.create! activity_type: :daily_fact, date: '2001-01-01'
+    Activity.create! activity_type: :daily_fact, date: '2000-01-01'
+    Activity.create! activity_type: :daily_fact, date: '2000-01-01'
+    expect(client.all_dates).to eq ['2000-01-01', '2000-10-05', '2001-01-01']
+  end
 end
