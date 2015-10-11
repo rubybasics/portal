@@ -1,6 +1,7 @@
 class Admin::ActivitiesController < ApplicationController
   def new
-    @activity = Activity.new
+    @activity_types = Activity.activity_types
+    @activity       = Activity.new
   end
 
   def create
