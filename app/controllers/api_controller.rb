@@ -1,6 +1,4 @@
 class ApiController < ActionController::Base
-  respond_to :json
-
   def today
     date           = Date.parse(params[:date])
     activities     = Activity.where(date: date)
@@ -12,6 +10,6 @@ class ApiController < ActionController::Base
       activities: activity_jsons,
     }
 
-    respond_with json
+    render json: json
   end
 end
