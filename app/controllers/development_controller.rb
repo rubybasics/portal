@@ -15,6 +15,7 @@ class DevelopmentController < ApplicationController
     session[:user_id] = user.id
     user_repository.will_find(user)
     Deject.register(:user_repository) { user_repository }
+    redirect_to admin_path
   end
 
   def show_env
