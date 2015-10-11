@@ -3,5 +3,35 @@
   <%= f.label :title %>:
   <%= f.text_field :title %><br />
 
+  <%= f.label :activity_type %>
+  <%= f.select(:activity_type, ActivityType.all.map {|a| [a.name.gsub('_', ' '), a.name]}, include_blank: 'Please select an activity type') %>
+
+  <%= f.label :location %>
+    <% Location.all.each do |location| %>
+    <%= label_tag "activity_location_ids_#{location.id}", location.name %>
+    <%= check_box_tag("activity[location_ids][#{location.id}]", location.name) %>
+  <% end %><br />
+
+  <%= f.label :instructor %>
+  <% Instructor.all.each do |instructor| %>
+    <%= label_tag "activity_instructor_ids_#{instructor.id}", instructor.name %>
+    <%= check_box_tag("activity[instructor_ids][#{instructor.id}]", instructor.name) %>
+  <% end %><br />
+
+  <%= f.label :cohort %>
+  <% Cohort.current.each do |cohort| %>
+    <%= label_tag "activity_cohort_ids_#{cohort.id}", cohort.name %>
+    <%= check_box_tag("activity[cohort_ids][#{cohort.id}]", cohort.name) %>
+  <% end %><br />
+
+  <%= f.label :start %>
+  <%= f.text_field :start %><br />
+
+  <%= f.label :finish %>
+  <%= f.text_field :finish %><br />
+
+  <%= f.label :content %>
+  <%= f.text_area :content %><br />
+
   <%= f.submit %>
 <% end %>

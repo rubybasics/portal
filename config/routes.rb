@@ -7,7 +7,7 @@ Rails.application.routes.draw do
     get '/today/:date' => 'today#show', as: :today
 
     scope '/today/:date' do
-      resources :activities, only: [:index, :new]
+      resources :activities, only: [:index, :new, :create]
     end
   end
 

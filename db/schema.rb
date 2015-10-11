@@ -29,6 +29,11 @@ ActiveRecord::Schema.define(version: 20151005203248) do
     t.integer "instructor_id"
   end
 
+  create_table "activities_to_locations", force: true do |t|
+    t.integer "activity_id"
+    t.integer "location_id"
+  end
+
 # Could not dump table "cohorts" because of following StandardError
 #   Unknown type 'status_type' for column 'status'
 
