@@ -6,6 +6,14 @@ RSpec.describe 'Integration test' do
     sprintf "%d:%02d", hours, minutes
   end
 
+  def client
+    @client ||= begin
+      session    = Rack::Test::Session.new(Rails.application)
+      web_client = Jsl::TodayJson::WebClients::Rack.new session
+      Jsl::TodayJson::Client.new(web_client)
+    end
+  end
+
   it 'can represent all the data from 2015-08-26, and generate content for today.turing.io' do
     c1510 = Cohort.create! name: '1510', status: :pending
     c1508 = Cohort.create! name: '1508', status: :current
@@ -392,11 +400,7 @@ RSpec.describe 'Integration test' do
 
     expect(Activity.count).to_not eq 0
 
-    session    = Rack::Test::Session.new(Rails.application)
-    web_client = Jsl::TodayJson::WebClients::Rack.new session
-    today_json = Jsl::TodayJson::Client.new(web_client)
-    day        = today_json.for(date)
-    markdown   = day.to_markdown
+    markdown = client.for(date).to_markdown
 
     expect(markdown).to_not include 'Tomorrows lesson'
 
@@ -405,5 +409,11 @@ RSpec.describe 'Integration test' do
 
     Today, in 1952, Will Shortz was born.
     MARKDOWN
+  end
+
+  it 'knows when there is no data for that date' do
+    expect(client.for '2000-01-01').to be_unscheduled
+    Activity.create! activity_type: :daily_fact, date: '2000-01-01', content: 'some fact'
+    expect(client.for '2000-01-01').to be_scheduled
   end
 end
