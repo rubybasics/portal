@@ -1,6 +1,10 @@
 require 'pg_enum_type'
 
 class Activity < ActiveRecord::Base
+  def self.all_dates
+    order(:date).uniq.pluck(:date)
+  end
+
   has_many :activities_to_cohorts, class_name: 'ActivityToCohort'
   has_many :activities_to_instructors, class_name: 'ActivityToInstructor'
 

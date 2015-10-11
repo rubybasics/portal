@@ -11,7 +11,7 @@ class ApiController < ActionController::Base
         activities: activity_jsons,
       }
     else
-      json = Activity.order(:date).uniq.pluck(:date)
+      json = Activity.all_dates
     end
     render json: json
   end
